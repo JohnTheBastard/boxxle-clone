@@ -1,0 +1,19 @@
+body {
+    background-color:orange;
+}
+
+#container {
+  width: 640px;
+  height: auto;
+  outline: none;
+  float: none;
+}
+
+
+div, img {
+    background-color: black;
+    width: 32px;
+    height: 32px;
+    float: left;
+}
+
