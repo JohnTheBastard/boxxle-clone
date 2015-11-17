@@ -53,20 +53,20 @@ function GameBoard() {
     }
 }
 
-
 var BOXER_GAME_MODULE = (function() {
-    
     var my = {};
     my.$anchor = $( "#gameBoard" );
     my.game = new GameBoard();
     my.$anchor.append( my.game.$element );
 
-    my.updateCell = function( [x, y], tileType, tileURL) {
-	my.game.coordinates[x][y].tile = tileType;
-	my.game.coordinates[x][y].$img.attr( 'src', tileURL );
+
+    // Chrome doesn't like accessing array elements this way.
+    my.updateCell = function( xy, tileType, tileURL) {
+	my.game.coordinates[ xy[0] ][ xy[1] ].tile = tileType;
+	my.game.coordinates[ xy[0] ][ xy[1] ].$img.attr( 'src', tileURL );
 
     }
-    
+
     my.loadLevel = function( levelObject ) {
 	// update floor tiles
 	for ( var ii = 0; ii < levelObject.floor.length; ii++ ) {
