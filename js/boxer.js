@@ -32,6 +32,7 @@ var listenToKeystrokes = true;
 var wallURL = "img/RedBrick.png";
 var floorURL = "img/FloorTile.png";
 var crateURL = "img/WoodenCrate.png";
+var crateOnDotURL = "img/WoodenCrateOnDot.png"
 var dotsURL  = "img/DotTile.png";
 var spriteURL = "img/Sprite.png";
 
@@ -131,6 +132,10 @@ function GameBoard(levelData) {
 	    this.crates.push( new Crate( this.boardData.crate[ii] ) );
 	    this.crates[ii].onDot = this.coordinates[ this.boardData.crate[ii][0] ][ this.boardData.crate[ii][1] ].isADot();
 	    this.coordinates[ this.boardData.crate[ii][0] ][ this.boardData.crate[ii][1] ].hasCrate = true;
+	    if ( this.crates[ii].onDot) {
+		this.crates[ii].$crateImg.attr('src', crateOnDotURL );
+	    }
+		
 	}
 
 	// make a sprite
@@ -185,8 +190,6 @@ function GameBoard(levelData) {
 	var dx = deltaXY[0];
 	var dy = deltaXY[1];
 	
-	
-	var currentLocation = this.coordinates[ x ][ y ];
 	var nextLocation = this.coordinates[ x + dx ][ y + dy ];
 
 	// Make sure two spaces away is on the board
@@ -229,7 +232,6 @@ var BOXER_GAME_MODULE = (function() {
 	my.game.init();
 	my.$anchor.append( my.game.$elementJQ );
 	my.$anchor.append( my.game.$canvasJQ );
-
     }
 
     my.processInput = function(key) {
@@ -264,23 +266,6 @@ var BOXER_GAME_MODULE = (function() {
 	document.body.addEventListener("scroll", function(e){e.preventDefault();});
     }
     my.eventListener();
-
-/*
-    setTimeout(foo, 15);
-    bool keystrokesMatter = true;
-    if (on press can move)
-    kestrokesMatter = false;
-    }
-    foo = function() {
-	if (gonnaAnimate) {
-	    my.updateAnimation();
-	    setTimeout(foo, 15);
-	} else {
-	    keystrokesMatter = true;
-	}
-    }
-
-*/
 
     return my;
 })();
