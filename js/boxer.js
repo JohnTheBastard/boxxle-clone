@@ -27,6 +27,8 @@ if ( mobile ) {
     var cellWidth = 32;
 }
 
+var listenToKeystrokes = true;
+
 var wallURL = "img/RedBrick.png";
 var floorURL = "img/FloorTile.png";
 var crateURL = "img/WoodenCrate.png";
@@ -148,6 +150,7 @@ function GameBoard(levelData) {
 
     this.move = function(deltaXY) {
 	// TODO: we still need to lock out keypresses between animation end states
+	listenToKeystrokes = false;
 	var x = this.sprite.x;
 	var y = this.sprite.y;
 
@@ -172,12 +175,13 @@ function GameBoard(levelData) {
 	setTimeout(function(){
 	    clearInterval(interval);
 	    drawFrame(1);
+	    listenToKeystrokes = true;
 	}, 256);
     }
 
     this.tryToMove = function( xy, deltaXY ) {
-	var x = xy[0] / cellWidth;
-	var y = xy[1] / cellWidth;
+	var x = xy[0];
+	var y = xy[1];
 	var dx = deltaXY[0];
 	var dy = deltaXY[1];
 	
@@ -232,23 +236,25 @@ var BOXER_GAME_MODULE = (function() {
 	// console.log("The counter is : " + counter);
 	var keyvalue = key.keyCode;
 	//there is probably no reason to pass this
-	var xy = [ my.game.sprite.x, my.game.sprite.y];
-	if (keyvalue == 37) {
-	    console.log("left");
-	    deltaXY = [ -1, 0 ];
-	} else if (keyvalue == 38) {
-	    console.log("up");
-	    deltaXY = [ 0, -1 ];
-	} else if (keyvalue == 39) {
-	    console.log("right");
-	    deltaXY = [ 1, 0 ];
-	} else if (keyvalue == 40) {
- 	    console.log("down");
-	    deltaXY = [ 0, 1 ];
-	} else {
-	    return;
+	var xy = [ (my.game.sprite.x / cellWidth), (my.game.sprite.y / cellWidth) ];
+	if ( listenToKeystrokes == true ) {
+	    if (keyvalue == 37) {
+		console.log("left");
+		deltaXY = [ -1, 0 ];
+	    } else if (keyvalue == 38) {
+		console.log("up");
+		deltaXY = [ 0, -1 ];
+	    } else if (keyvalue == 39) {
+		console.log("right");
+		deltaXY = [ 1, 0 ];
+	    } else if (keyvalue == 40) {
+ 		console.log("down");
+		deltaXY = [ 0, 1 ];
+	    } else {
+		return;
+	    }
+	    my.game.tryToMove( xy, deltaXY );
 	}
-	my.game.tryToMove( xy, deltaXY );
     }
 
 
