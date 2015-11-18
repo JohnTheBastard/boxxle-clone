@@ -72,10 +72,12 @@ function Sprite( xy ) {
     this.x = xy[0] * cellWidth;
     this.y = xy[1] * cellWidth;
     this.$img = $('<img></img>').attr('src', spriteURL );
+    this.stepCount = 0;
 }
 
 function GameBoard(levelData) {
     this.boardData = levelData;
+    this.winCondition = false;
     this.coordinates = [ ];
     this.crates = [ ];
     
@@ -153,19 +155,37 @@ function GameBoard(levelData) {
 	console.log("Error: crate not found.");
     }
 
+    this.checkWinCondition = function() {
+	var onDotCounter = 0;
+	for (var ii = 0; ii < this.crates.length; ii++ ) {
+	    if ( this.crates[ii].onDot ) {
+		onDotCounter++;
+	    }
+	}
+	if ( onDotCounter == this.crates.length ) {
+	    // win condition satisfied!!
+	    // trigger end of level
+	    console.log("You win!");
+	    console.log("You used " + this.sprite.stepCount + " steps.");
+	    return true;
+	} else {
+	    return false;
+	}
+    }
+    
     this.updateCrateStatus = function(crateIndex, oldPosition, newPosition) {
 	
 	this.coordinates[ oldPosition[0] ][ oldPosition[1] ].hasCrate = false;
 	this.coordinates[ newPosition[0] ][ newPosition[1] ].hasCrate = true;
 
-	//console.log("is a dot: " + this.coordinates[ newPosition[0] ][ newPosition[1] ].isADot() );
 	if ( this.coordinates[ newPosition[0] ][ newPosition[1] ].isADot() ){
 	    this.crates[crateIndex].onDot = true;
-	    //console.log(this.crates[crateIndex].$crateImg);
 	    this.crates[crateIndex].$crateImg.attr('src', crateOnDotURL );
 	} else {
 	    this.crates[crateIndex].onDot = false;
 	}
+
+	this.winCondition = this.checkWinCondition();
 	
     }
     
@@ -188,7 +208,6 @@ function GameBoard(levelData) {
 	var frames = cellWidth;
 
 	if ( withCrate ) {
-	    console.log([ x / cellWidth + deltaXY[0] ,  y / cellWidth + deltaXY[1] ]);
 	    var crateIndex = self.findCrate([ x + deltaXY[0]*cellWidth ,  y + deltaXY[1]*cellWidth ]);
 	    var xCrate = self.crates[crateIndex].x;
 	    var yCrate = self.crates[crateIndex].y;
@@ -215,13 +234,11 @@ function GameBoard(levelData) {
 	    clearInterval(interval);
 	    drawFrame(1);
 	    if ( withCrate ) {
-		console.log("index = " + crateIndex + ", crate = " + self.crates[crateIndex]
-			    + ", old crate = " + [xCrate / cellWidth ,yCrate / cellWidth ] + ", new crate = "
-			    + [ xCrate/cellWidth + deltaXY[0] ,  yCrate/cellWidth + deltaXY[1] ] );
 		self.updateCrateStatus(crateIndex,
 				       [xCrate / cellWidth ,yCrate / cellWidth ],
 				       [ xCrate/cellWidth + deltaXY[0] ,  yCrate/cellWidth + deltaXY[1] ] );
 	    }
+	    self.sprite.stepCount++;
 	    listenToKeystrokes = true;
 	}, 256);
     }
@@ -268,7 +285,8 @@ var BOXER_GAME_MODULE = (function() {
     var my = {};
     my.$anchor = $( "#gameBoard" );
 
-    // I don't really understand window.onload so I'm probably doing this wrong.
+    // I don't really understand window.onload behavior
+    // so I'm probably doing this wrong.
     window.onload = function () {
 	my.game = new GameBoard( levelData[0] );
 	my.game.init();
@@ -277,11 +295,9 @@ var BOXER_GAME_MODULE = (function() {
     }
 
     my.processInput = function(key) {
-	// console.log("The counter is : " + counter);
 	var keyvalue = key.keyCode;
-	//there is probably no reason to pass this
 	var xy = [ (my.game.sprite.x / cellWidth), (my.game.sprite.y / cellWidth) ];
-	if ( listenToKeystrokes == true ) {
+	if ( listenToKeystrokes  && !my.game.winCondition ) {
 	    if (keyvalue == 37) {
 		console.log("left");
 		deltaXY = [ -1, 0 ];
