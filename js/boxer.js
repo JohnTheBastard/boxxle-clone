@@ -6,6 +6,12 @@
  * CF201       Fall 2015       *
  * * * * * * * * * * * * * * * */
 
+ /*function saveVariables() {
+   localStorage.Name = username;
+   localStorage.Level = currentLevel;
+
+ }*/
+
 // all level data: this will eventually be moved to a JSON file
 var levelData = [ { dimension: 10,
 		    floor: [ [ 01, 01 ], [ 02, 01 ], [ 03, 01 ], [ 01, 02 ],
@@ -18,7 +24,20 @@ var levelData = [ { dimension: 10,
 		    start: [ 01, 01 ],
 		    crate: [ [ 02, 02 ], [ 03, 02 ], [ 02, 03 ] ],
 		    dots:  [ [ 07, 03 ], [ 07, 04 ], [ 07, 05 ] ]
-		  } ]
+		  },
+			{ dimension: 10,
+				floor: [ [ 01, 01 ], [ 02, 01 ], [ 03, 01 ], [ 04, 01 ], [ 05, 01 ],
+			  	 [ 06, 01 ], [ 07, 01 ], [ 08, 01 ], [ 01, 02 ], [ 02, 02 ],
+					 [ 03, 02 ], [ 04, 02 ], [ 05, 02 ], [ 07, 02 ], [ 08, 02 ],
+				 	 [ 01, 03 ], [ 02, 03 ], [ 04, 03 ], [ 07, 03 ], [ 01, 04 ],
+				   [ 02, 04 ], [ 03, 04 ], [ 04, 04 ], [ 05, 04 ], [ 06, 04 ],
+				   [ 07, 04 ], [ 05, 05 ], [ 07, 05 ], [ 03, 06 ], [ 04, 06 ],
+				   [ 05, 06 ], [ 06, 06 ], [ 07, 06 ], [ 03, 07 ], [ 04, 07 ],
+				   [ 05, 07 ], [ 06, 07 ], [ 07, 07 ], ],
+				start: [ 06, 06 ],
+			  crate: [ [ 03, 02 ], [ 04, 03 ], [ 02, 04 ], [ 04, 06 ] ],
+			  dots: [ [ 01, 01 ], [ 02, 01 ], [ 01, 02 ], [ 02, 02 ], ]
+			} ]
 
 var mobile = false;
 if ( mobile ) {
@@ -51,7 +70,7 @@ function Coord(tileType, tileURL) {
     this.$img.attr( 'src', tileURL );
     this.$div.append( this.$img );
     this.hasCrate = false;
-    
+
     this.isADot = function() {
 	if ( this.tile == "dot" ) {
 	    return true;
@@ -78,7 +97,7 @@ function GameBoard(levelData) {
     this.boardData = levelData;
     this.coordinates = [ ];
     this.crates = [ ];
-    
+
     this.$canvasJQ = $('<canvas></canvas>');
     this.canvas = this.$canvasJQ[0];
     this.context = this.canvas.getContext("2d");
@@ -88,7 +107,7 @@ function GameBoard(levelData) {
     this.canvas.style.left = 0;
     this.canvas.style.top = 0;
     this.canvas.style.zIndex = "10";
-    
+
     this.$elementJQ = $('<section></section>').attr( 'id', "container" );
     this.element = this.$elementJQ[0];
     this.element.style.position = "absolute";
@@ -102,7 +121,7 @@ function GameBoard(levelData) {
 	    this.$elementJQ.append( this.coordinates[jj][ii].$div );
 	}
     }
-    
+
 
 
     /* * * * * * * * * * * * * * * *
@@ -135,7 +154,7 @@ function GameBoard(levelData) {
 	    if ( this.crates[ii].onDot) {
 		this.crates[ii].$crateImg.attr('src', crateOnDotURL );
 	    }
-		
+
 	}
 
 	// make a sprite
@@ -154,7 +173,7 @@ function GameBoard(levelData) {
     }
 
     this.updateCrateStatus = function(crateIndex, oldPosition, newPosition) {
-	
+
 	this.coordinates[ oldPosition[0] ][ oldPosition[1] ].hasCrate = false;
 	this.coordinates[ newPosition[0] ][ newPosition[1] ].hasCrate = true;
 
@@ -166,9 +185,9 @@ function GameBoard(levelData) {
 	} else {
 	    this.crates[crateIndex].onDot = false;
 	}
-	
+
     }
-    
+
     // draw our sprite and crates to the canvas
      this.draw = function() {
 	 this.context.clearRect(0, 0, this.canvas.width, this.canvas.height );
@@ -193,7 +212,7 @@ function GameBoard(levelData) {
 	    var xCrate = self.crates[crateIndex].x;
 	    var yCrate = self.crates[crateIndex].y;
 	}
-	
+
 	function drawFrame(fraction) {
 	    // This looks weird, but we'll be sure that the sprite ends in
 	    // a valid location when setTimeout calls drawFrame(1)
@@ -231,7 +250,7 @@ function GameBoard(levelData) {
 	var y = xy[1];
 	var dx = deltaXY[0];
 	var dy = deltaXY[1];
-	
+
 	var nextLocation = this.coordinates[ x + dx ][ y + dy ];
 
 	// Make sure two spaces away is on the board
