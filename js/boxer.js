@@ -47,7 +47,8 @@ function Coord(tileType, tileURL) {
     this.tile = tileType;
     this.$img.attr( 'src', tileURL );
     this.$div.append( this.$img );
-
+    this.hasCrate = false;
+    
     this.isADot = function() {
 	if ( this.tile == "dot" ) {
 	    return true;
@@ -70,33 +71,35 @@ function Sprite( xy ) {
     this.$img = $('<img></img>').attr('src', spriteURL );
 }
 
-function GameBoard() {
+function GameBoard(levelData) {
+    this.boardData = levelData;
     this.coordinates = [ ];
+    this.crates = [ ];
+    
     this.$canvasJQ = $('<canvas></canvas>');
     this.canvas = this.$canvasJQ[0];
     this.context = this.canvas.getContext("2d");
-    this.canvas.width = 320;
-    this.canvas.height = 320;
+    this.canvas.width = this.boardData.dimension * cellWidth;
+    this.canvas.height = this.boardData.dimension * cellWidth;
     this.canvas.style.position = "absolute";
     this.canvas.style.left = 0;
     this.canvas.style.top = 0;
     this.canvas.style.zIndex = "10";
+    
     this.$elementJQ = $('<section></section>').attr( 'id', "container" );
     this.element = this.$elementJQ[0];
     this.element.style.position = "absolute";
     this.element.style.left = 0;
     this.element.style.top = 0;
     this.element.style.zIndex = "0";
-    for ( var ii = 0; ii < 10; ii++ ) {
-	for ( var jj = 0; jj < 10; jj++ ) {
+    for ( var ii = 0; ii < this.boardData.dimension; ii++ ) {
+	for ( var jj = 0; jj < this.boardData.dimension; jj++ ) {
 	    this.coordinates.push( [ ] );
 	    this.coordinates[jj].push( new Coord( "wall", wallURL ) );
 	    this.$elementJQ.append( this.coordinates[jj][ii].$div );
 	}
-}
-
-    this.crates = [ ];
-
+    }
+    
 
 
     /* * * * * * * * * * * * * * * *
@@ -104,31 +107,32 @@ function GameBoard() {
      * * * * * * * * * * * * * * * */
 
     // Chrome needs me to access parameter arrays this way.
-    this.updateCell = function( xy, tileType, tileURL) {
+    this.updateCell = function( xy, tileType, tileURL, crateStatus) {
 	this.coordinates[ xy[0] ][ xy[1] ].tile = tileType;
 	this.coordinates[ xy[0] ][ xy[1] ].$img.attr( 'src', tileURL );
+	this.coordinates[ xy[0] ][ xy[1] ].hasCrate = crateStatus;
 
     }
 
-    this.loadLevel = function( levelObject ) {
+    this.init = function() {
 	// update floor tiles
-	for ( var ii = 0; ii < levelObject.floor.length; ii++ ) {
-	    this.updateCell(levelObject.floor[ii], "floor", floorURL );
+	for ( var ii = 0; ii < this.boardData.floor.length; ii++ ) {
+	    this.updateCell(this.boardData.floor[ii], "floor", floorURL, false );
 	}
 	// update dot tiles
-	for ( var ii = 0; ii < levelObject.dots.length; ii++ ) {
-	    this.updateCell(levelObject.dots[ii], "dot", dotsURL );
+	for ( var ii = 0; ii < this.boardData.dots.length; ii++ ) {
+	    this.updateCell(this.boardData.dots[ii], "dot", dotsURL, false );
 	}
 
 	// make our crates
-	for ( var ii = 0; ii < levelObject.crate.length; ii++ ) {
-	    this.crates.push( new Crate( levelObject.crate[ii] ) );
-	    this.crates[ii].onDot = this.coordinates[ levelObject.crate[ii][0] ][ levelObject.crate[ii][1] ].isADot();
-	    //this.context.drawImage( this.crates[ii].$crateImg[0], this.crates[ii].x, this.crates[ii].y );
+	for ( var ii = 0; ii < this.boardData.crate.length; ii++ ) {
+	    this.crates.push( new Crate( this.boardData.crate[ii] ) );
+	    this.crates[ii].onDot = this.coordinates[ this.boardData.crate[ii][0] ][ this.boardData.crate[ii][1] ].isADot();
+	    this.coordinates[ this.boardData.crate[ii][0] ][ this.boardData.crate[ii][1] ].hasCrate = true;
 	}
 
 	// make a sprite
-	this.sprite = new Sprite( levelObject.start );
+	this.sprite = new Sprite( this.boardData.start );
 
 	this.draw();
     }
@@ -172,19 +176,41 @@ function GameBoard() {
     }
 
     this.tryToMove = function( xy, deltaXY ) {
-	if ( true ) {  //we'll add collision detection here later
-	    this.move(deltaXY);
+	var x = xy[0] / cellWidth;
+	var y = xy[1] / cellWidth;
+	var dx = deltaXY[0];
+	var dy = deltaXY[1];
+	
+	
+	var currentLocation = this.coordinates[ x ][ y ];
+	var nextLocation = this.coordinates[ x + dx ][ y + dy ];
+
+	// Make sure two spaces away is on the board
+	if ( ( 0 <= x + 2*dx && x + 2*dx < this.boardData.dimension ) &&
+	     ( 0 <= y + 2*dy && y + 2*dy < this.boardData.dimension ) ) {
+	    var twoAway = this.coordinates[ x + 2*dx ][ y + 2*dy ];
+	    twoAway.exists = true;
+	} else {
+	    // Two spaces away would be off the board
+	    var twoAway = {};
+	    twoAway.exists = false;
 	}
 
-	/*
-	if ( this.coordinate[ xy[0] + delta[0] ][ xy[1] + delta[1] ]
-	     == ( "wall" || "dot" ) ) {
+	if ( nextLocation.tile == "wall" ) {
 	    return;
-	} else if ( this.coordinate[ xy[0] + delta[0] ][ xy[1] + delta[1] ] = "crate" ) {
-	    // oops, I broke this when I moved crates to the canvas
-	    // give every coordinate a "hasCrate" bool to check instead?
+	} else if ( nextLocation.hasCrate ) {
+	    if ( twoAway.exists && !twoAway.hasCrate && twoAway.tile != "wall" ) {
+		// move with crate
+		this.move(deltaXY);
+	    }
+	    return;
+	} else if ( ( nextLocation.tile == "floor" ) ||
+		    ( nextLocation.tile == "dot") ) {
+	    this.move(deltaXY);
+	    return;
+	} else {
+	    console.log("error");
 	}
-	*/
     }
 
 }
@@ -195,10 +221,11 @@ var BOXER_GAME_MODULE = (function() {
 
     // I don't really understand window.onload so I'm probably doing this wrong.
     window.onload = function () {
-	my.game = new GameBoard();
+	my.game = new GameBoard( levelData[0] );
+	my.game.init();
 	my.$anchor.append( my.game.$elementJQ );
 	my.$anchor.append( my.game.$canvasJQ );
-	my.game.loadLevel( levelData[0] );
+
     }
 
     my.processInput = function(key) {
