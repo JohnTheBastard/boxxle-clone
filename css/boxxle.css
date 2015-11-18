@@ -1,19 +1,26 @@
-body {
-    background-color:orange;
+#gameboy {
+  overflow: auto;
+  padding: 20px 5px 5px 5px;
+  border: 10px solid black;
+  margin: 0px auto;
+  max-width: 100%;
+  max-height: 100%;
+  width: 340px;
+  height: 355px;
+  background-color: #ccc;
 }
 
 #container {
   width: 320px;
   height: auto;
-  outline: none;
-  float: none;
+  margin: 0 auto;
+
 }
 
 
-div, img {
+#container div, img {
     background-color: black;
     width: 32px;
     height: 32px;
     float: left;
 }
-
