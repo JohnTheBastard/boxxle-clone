@@ -4,11 +4,7 @@
 body {
   font-family: sans-serif;
 }
-#wrapper {
-  max-width: 940px;
-  padding: 0 5%;
-  margin: 0 auto;
-}
+
 
 a {
   text-decoration: none;

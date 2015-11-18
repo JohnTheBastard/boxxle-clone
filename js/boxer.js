@@ -61,13 +61,13 @@ function Crate( xy ) {
     this.x = xy[0] * cellWidth;
     this.y = xy[1] * cellWidth;
     this.onDot = false;
-    this.$crateImg = $('<img></img>').attr('src', crateURL );    
+    this.$crateImg = $('<img></img>').attr('src', crateURL );
 }
 
 function Sprite( xy ) {
     this.x = xy[0] * cellWidth;
     this.y = xy[1] * cellWidth;
-    this.$img = $('<img></img>').attr('src', spriteURL );    
+    this.$img = $('<img></img>').attr('src', spriteURL );
 }
 
 function GameBoard() {
@@ -93,7 +93,7 @@ function GameBoard() {
 	    this.coordinates[jj].push( new Coord( "wall", wallURL ) );
 	    this.$elementJQ.append( this.coordinates[jj][ii].$div );
 	}
-    }
+}
 
     this.crates = [ ];
 
@@ -107,9 +107,9 @@ function GameBoard() {
     this.updateCell = function( xy, tileType, tileURL) {
 	this.coordinates[ xy[0] ][ xy[1] ].tile = tileType;
 	this.coordinates[ xy[0] ][ xy[1] ].$img.attr( 'src', tileURL );
-	
+
     }
-    
+
     this.loadLevel = function( levelObject ) {
 	// update floor tiles
 	for ( var ii = 0; ii < levelObject.floor.length; ii++ ) {
@@ -119,7 +119,7 @@ function GameBoard() {
 	for ( var ii = 0; ii < levelObject.dots.length; ii++ ) {
 	    this.updateCell(levelObject.dots[ii], "dot", dotsURL );
 	}
-	
+
 	// make our crates
 	for ( var ii = 0; ii < levelObject.crate.length; ii++ ) {
 	    this.crates.push( new Crate( levelObject.crate[ii] ) );
@@ -146,31 +146,31 @@ function GameBoard() {
 	// TODO: we still need to lock out keypresses between animation end states
 	var x = this.sprite.x;
 	var y = this.sprite.y;
-	
+
 	var self = this;
 	var draw = this.draw.bind(this);
 	var counter = 0;
 	var frames = cellWidth;
-	
+
 	function drawFrame(fraction) {
-	    // This looks weird, but we'll be sure that the sprite ends in 
+	    // This looks weird, but we'll be sure that the sprite ends in
 	    // a valid location when setTimeout calls drawFrame(1)
 	    self.sprite.x = x + ( cellWidth * deltaXY[0] * fraction );
 	    self.sprite.y = y + ( cellWidth * deltaXY[1] * fraction );
 	    requestAnimationFrame(draw);
 	}
-	
+
 	var interval = setInterval(function(){
 	    counter++;
 	    drawFrame(counter/frames);
 	}, 256 / 32 );
-	
+
 	setTimeout(function(){
 	    clearInterval(interval);
 	    drawFrame(1);
 	}, 256);
     }
-    
+
     this.tryToMove = function( xy, deltaXY ) {
 	if ( true ) {  //we'll add collision detection here later
 	    this.move(deltaXY);
@@ -186,13 +186,13 @@ function GameBoard() {
 	}
 	*/
     }
-    
+
 }
 
 var BOXER_GAME_MODULE = (function() {
     var my = {};
     my.$anchor = $( "#gameBoard" );
- 	
+
     // I don't really understand window.onload so I'm probably doing this wrong.
     window.onload = function () {
 	my.game = new GameBoard();
@@ -200,7 +200,7 @@ var BOXER_GAME_MODULE = (function() {
 	my.$anchor.append( my.game.$canvasJQ );
 	my.game.loadLevel( levelData[0] );
     }
-    
+
     my.processInput = function(key) {
 	// console.log("The counter is : " + counter);
 	var keyvalue = key.keyCode;
@@ -223,7 +223,7 @@ var BOXER_GAME_MODULE = (function() {
 	}
 	my.game.tryToMove( xy, deltaXY );
     }
- 
+
 
     my.eventListener= function() {
 	window.addEventListener("keydown", my.processInput, false);
@@ -248,6 +248,6 @@ var BOXER_GAME_MODULE = (function() {
     }
 
 */
-    
+
     return my;
 })();
