@@ -7,7 +7,8 @@
  * * * * * * * * * * * * * * * */
 
 // all level data: this will eventually be moved to a JSON file
-var levelData = [ { floor: [ [ 01, 01 ], [ 02, 01 ], [ 03, 01 ], [ 01, 02 ],
+var levelData = [ { dimension: 10,
+		    floor: [ [ 01, 01 ], [ 02, 01 ], [ 03, 01 ], [ 01, 02 ],
 			     [ 02, 02 ], [ 03, 02 ], [ 01, 03 ], [ 02, 03 ],
 			     [ 03, 03 ], [ 07, 03 ], [ 03, 04 ], [ 07, 04 ],
 			     [ 03, 05 ], [ 04, 05 ], [ 05, 05 ], [ 06, 05 ],
@@ -74,8 +75,8 @@ function GameBoard() {
     this.$canvasJQ = $('<canvas></canvas>');
     this.canvas = this.$canvasJQ[0];
     this.context = this.canvas.getContext("2d");
-    this.canvas.width = 640;
-    this.canvas.height = 640;
+    this.canvas.width = 320;
+    this.canvas.height = 320;
     this.canvas.style.position = "absolute";
     this.canvas.style.left = 0;
     this.canvas.style.top = 0;
@@ -86,8 +87,8 @@ function GameBoard() {
     this.element.style.left = 0;
     this.element.style.top = 0;
     this.element.style.zIndex = "0";
-    for ( var ii = 0; ii < 20; ii++ ) {
-	for ( var jj = 0; jj < 20; jj++ ) {
+    for ( var ii = 0; ii < 10; ii++ ) {
+	for ( var jj = 0; jj < 10; jj++ ) {
 	    this.coordinates.push( [ ] );
 	    this.coordinates[jj].push( new Coord( "wall", wallURL ) );
 	    this.$elementJQ.append( this.coordinates[jj][ii].$div );
@@ -141,35 +142,49 @@ function GameBoard() {
 	 this.context.drawImage(this.sprite.$img[0], this.sprite.x, this.sprite.y );
     }
 
-    
-    this.tryToMove = function( deltaXY ) {
-	if ( true ) {  //we'll add collision detection here later
-	    var x = this.sprite.x;
-	    var y = this.sprite.y;
-
-	    var self = this;
-	    var draw = this.draw.bind(this);
-	    var counter = 0;
-	    var frames = 32;
-
-	    function drawFrame(fraction) {
-	   	self.sprite.x = x + ( cellWidth * deltaXY[0] * fraction );
-		self.sprite.y = y + ( cellWidth * deltaXY[1] * fraction );
-		requestAnimationFrame(draw);
-	    //requestAnimationFrame(function(){ this.draw(); } );
-	    }
-	    
-	    var interval = setInterval(function(){
-		counter++;
-		drawFrame(counter/frames);
-	    }, 256 / 32 );
-	    
-	    setTimeout(function(){
-		clearInterval(interval);
-		drawFrame(1);
-	    }, 256);
-	    //this.draw();
+    this.move = function(deltaXY) {
+	// TODO: we still need to lock out keypresses between animation end states
+	var x = this.sprite.x;
+	var y = this.sprite.y;
+	
+	var self = this;
+	var draw = this.draw.bind(this);
+	var counter = 0;
+	var frames = cellWidth;
+	
+	function drawFrame(fraction) {
+	    // This looks weird, but we'll be sure that the sprite ends in 
+	    // a valid location when setTimeout calls drawFrame(1)
+	    self.sprite.x = x + ( cellWidth * deltaXY[0] * fraction );
+	    self.sprite.y = y + ( cellWidth * deltaXY[1] * fraction );
+	    requestAnimationFrame(draw);
 	}
+	
+	var interval = setInterval(function(){
+	    counter++;
+	    drawFrame(counter/frames);
+	}, 256 / 32 );
+	
+	setTimeout(function(){
+	    clearInterval(interval);
+	    drawFrame(1);
+	}, 256);
+    }
+    
+    this.tryToMove = function( xy, deltaXY ) {
+	if ( true ) {  //we'll add collision detection here later
+	    this.move(deltaXY);
+	}
+
+	/*
+	if ( this.coordinate[ xy[0] + delta[0] ][ xy[1] + delta[1] ]
+	     == ( "wall" || "dot" ) ) {
+	    return;
+	} else if ( this.coordinate[ xy[0] + delta[0] ][ xy[1] + delta[1] ] = "crate" ) {
+	    // oops, I broke this when I moved crates to the canvas
+	    // give every coordinate a "hasCrate" bool to check instead?
+	}
+	*/
     }
     
 }
@@ -189,32 +204,26 @@ var BOXER_GAME_MODULE = (function() {
     my.processInput = function(key) {
 	// console.log("The counter is : " + counter);
 	var keyvalue = key.keyCode;
-	// var currentLocationX = spriteLocation[0];
-	// var currentLocationY = spriteLocation[1];
-	var deltaXY = [ ];
+	//there is probably no reason to pass this
+	var xy = [ my.game.sprite.x, my.game.sprite.y];
 	if (keyvalue == 37) {
 	    console.log("left");
 	    deltaXY = [ -1, 0 ];
-
 	} else if (keyvalue == 38) {
 	    console.log("up");
 	    deltaXY = [ 0, -1 ];
-
 	} else if (keyvalue == 39) {
 	    console.log("right");
 	    deltaXY = [ 1, 0 ];
-
 	} else if (keyvalue == 40) {
  	    console.log("down");
 	    deltaXY = [ 0, 1 ];
 	} else {
 	    return;
 	}
-	my.game.tryToMove( deltaXY );
+	my.game.tryToMove( xy, deltaXY );
     }
-    
-    
-
+ 
 
     my.eventListener= function() {
 	window.addEventListener("keydown", my.processInput, false);
