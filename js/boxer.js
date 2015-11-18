@@ -144,6 +144,31 @@ function GameBoard(levelData) {
 	this.draw();
     }
 
+    this.findCrate = function( xy ) {
+	for (var ii = 0; ii < this.crates.length; ii++ ) {
+	    if ( xy[0] == this.crates[ii].x && xy[1] == this.crates[ii].y ) {
+		return ii;
+	    }
+	}
+	console.log("Error: crate not found.");
+    }
+
+    this.updateCrateStatus = function(crateIndex, oldPosition, newPosition) {
+	
+	this.coordinates[ oldPosition[0] ][ oldPosition[1] ].hasCrate = false;
+	this.coordinates[ newPosition[0] ][ newPosition[1] ].hasCrate = true;
+
+	//console.log("is a dot: " + this.coordinates[ newPosition[0] ][ newPosition[1] ].isADot() );
+	if ( this.coordinates[ newPosition[0] ][ newPosition[1] ].isADot() ){
+	    this.crates[crateIndex].onDot = true;
+	    //console.log(this.crates[crateIndex].$crateImg);
+	    this.crates[crateIndex].$crateImg.attr('src', crateOnDotURL );
+	} else {
+	    this.crates[crateIndex].onDot = false;
+	}
+	
+    }
+    
     // draw our sprite and crates to the canvas
      this.draw = function() {
 	 this.context.clearRect(0, 0, this.canvas.width, this.canvas.height );
@@ -153,33 +178,50 @@ function GameBoard(levelData) {
 	 this.context.drawImage(this.sprite.$img[0], this.sprite.x, this.sprite.y );
     }
 
-    this.move = function(deltaXY) {
-	// TODO: we still need to lock out keypresses between animation end states
+    this.move = function(deltaXY, withCrate) {
 	listenToKeystrokes = false;
 	var x = this.sprite.x;
 	var y = this.sprite.y;
-
 	var self = this;
 	var draw = this.draw.bind(this);
 	var counter = 0;
 	var frames = cellWidth;
 
+	if ( withCrate ) {
+	    console.log([ x / cellWidth + deltaXY[0] ,  y / cellWidth + deltaXY[1] ]);
+	    var crateIndex = self.findCrate([ x + deltaXY[0]*cellWidth ,  y + deltaXY[1]*cellWidth ]);
+	    var xCrate = self.crates[crateIndex].x;
+	    var yCrate = self.crates[crateIndex].y;
+	}
+	
 	function drawFrame(fraction) {
 	    // This looks weird, but we'll be sure that the sprite ends in
 	    // a valid location when setTimeout calls drawFrame(1)
 	    self.sprite.x = x + ( cellWidth * deltaXY[0] * fraction );
 	    self.sprite.y = y + ( cellWidth * deltaXY[1] * fraction );
+	    if ( withCrate ) {
+		self.crates[crateIndex].x = xCrate + ( cellWidth * deltaXY[0] * fraction );
+		self.crates[crateIndex].y = yCrate + ( cellWidth * deltaXY[1] * fraction );
+	    }
 	    requestAnimationFrame(draw);
 	}
 
 	var interval = setInterval(function(){
 	    counter++;
 	    drawFrame(counter/frames);
-	}, 256 / 32 );
+	}, 256 / cellWidth );
 
 	setTimeout(function(){
 	    clearInterval(interval);
 	    drawFrame(1);
+	    if ( withCrate ) {
+		console.log("index = " + crateIndex + ", crate = " + self.crates[crateIndex]
+			    + ", old crate = " + [xCrate / cellWidth ,yCrate / cellWidth ] + ", new crate = "
+			    + [ xCrate/cellWidth + deltaXY[0] ,  yCrate/cellWidth + deltaXY[1] ] );
+		self.updateCrateStatus(crateIndex,
+				       [xCrate / cellWidth ,yCrate / cellWidth ],
+				       [ xCrate/cellWidth + deltaXY[0] ,  yCrate/cellWidth + deltaXY[1] ] );
+	    }
 	    listenToKeystrokes = true;
 	}, 256);
     }
@@ -208,12 +250,12 @@ function GameBoard(levelData) {
 	} else if ( nextLocation.hasCrate ) {
 	    if ( twoAway.exists && !twoAway.hasCrate && twoAway.tile != "wall" ) {
 		// move with crate
-		this.move(deltaXY);
+		this.move(deltaXY, true);
 	    }
 	    return;
 	} else if ( ( nextLocation.tile == "floor" ) ||
 		    ( nextLocation.tile == "dot") ) {
-	    this.move(deltaXY);
+	    this.move(deltaXY, false);
 	    return;
 	} else {
 	    console.log("error");
