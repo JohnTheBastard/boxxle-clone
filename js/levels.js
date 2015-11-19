@@ -1,4 +1,4 @@
-  var easyLevels = { levelDataEasy: [ { dimension: 10,
+  var easyLevels = { levelData: [ { dimension: 10,
 		    floor: [ [ 01, 01 ], [ 02, 01 ], [ 03, 01 ], [ 01, 02 ],
 			     [ 02, 02 ], [ 03, 02 ], [ 01, 03 ], [ 02, 03 ],
 			     [ 03, 03 ], [ 07, 03 ], [ 03, 04 ], [ 07, 04 ],
@@ -130,7 +130,7 @@
         dots: [ [ 03, 03 ], [ 04, 03 ], [ 05, 03 ], [ 06, 03 ] ]
       }  ] }
 
-var hardLevels =  {levelDataHard: [ { dimension: 10,
+var hardLevels =  {levelData: [ { dimension: 10,
          floor: [ [ 02, 01 ], [ 03, 01 ], [ 04, 01 ], [ 05, 01 ], [ 06, 01 ],
 			      [ 02, 02 ], [ 03, 02 ], [ 04, 02 ], [ 03, 03 ], [ 04, 03 ],
 					  [ 05, 03 ], [ 06, 03 ], [ 07, 03 ], [ 01, 04 ], [ 02, 04 ],
