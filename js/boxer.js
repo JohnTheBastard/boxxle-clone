@@ -17,21 +17,39 @@ var levelData = [ { dimension: 10,
 			     [ 04, 07 ] ],
 		    start: [ 01, 01 ],
 		    crate: [ [ 02, 02 ], [ 03, 02 ], [ 02, 03 ] ],
-		    dots:  [ [ 07, 03 ], [ 07, 04 ], [ 07, 05 ] ]
+		    dots:  [ //[ 02, 02 ], [ 03, 02 ], [ 03, 03 ] ]
+		             [ 07, 03 ], [ 07, 04 ], [ 07, 05 ] ]
 		  },
-			{ dimension: 10,
-				floor: [ [ 01, 01 ], [ 02, 01 ], [ 03, 01 ], [ 04, 01 ], [ 05, 01 ],
-			  	 [ 06, 01 ], [ 07, 01 ], [ 08, 01 ], [ 01, 02 ], [ 02, 02 ],
-					 [ 03, 02 ], [ 04, 02 ], [ 05, 02 ], [ 07, 02 ], [ 08, 02 ],
-				 	 [ 01, 03 ], [ 02, 03 ], [ 04, 03 ], [ 07, 03 ], [ 01, 04 ],
-				   [ 02, 04 ], [ 03, 04 ], [ 04, 04 ], [ 05, 04 ], [ 06, 04 ],
-				   [ 07, 04 ], [ 05, 05 ], [ 07, 05 ], [ 03, 06 ], [ 04, 06 ],
-				   [ 05, 06 ], [ 06, 06 ], [ 07, 06 ], [ 03, 07 ], [ 04, 07 ],
-				   [ 05, 07 ], [ 06, 07 ], [ 07, 07 ], ],
-				start: [ 06, 06 ],
-			  crate: [ [ 03, 02 ], [ 04, 03 ], [ 02, 04 ], [ 04, 06 ] ],
-			  dots: [ [ 01, 01 ], [ 02, 01 ], [ 01, 02 ], [ 02, 02 ], ]
-			} ]  
+		  { dimension: 10,
+		    floor: [ [ 01, 01 ], [ 02, 01 ], [ 03, 01 ], [ 04, 01 ], [ 05, 01 ],
+			     [ 06, 01 ], [ 07, 01 ], [ 08, 01 ], [ 01, 02 ], [ 02, 02 ],
+			     [ 03, 02 ], [ 04, 02 ], [ 05, 02 ], [ 07, 02 ], [ 08, 02 ],
+			     [ 01, 03 ], [ 02, 03 ], [ 04, 03 ], [ 07, 03 ], [ 01, 04 ],
+			     [ 02, 04 ], [ 03, 04 ], [ 04, 04 ], [ 05, 04 ], [ 06, 04 ],
+			     [ 07, 04 ], [ 05, 05 ], [ 07, 05 ], [ 03, 06 ], [ 04, 06 ],
+			     [ 05, 06 ], [ 06, 06 ], [ 07, 06 ], [ 03, 07 ], [ 04, 07 ],
+			     [ 05, 07 ], [ 06, 07 ], [ 07, 07 ], ],
+		    start: [ 06, 06 ],
+		    crate: [ [ 03, 02 ], [ 04, 03 ], [ 02, 04 ], [ 04, 06 ] ],
+		    dots: [ [ 01, 01 ], [ 02, 01 ], [ 01, 02 ], [ 02, 02 ], ]
+		  },
+		  { dimension: 13,
+		    floor: [ [ 08, 01 ], [ 09, 01 ], [ 08, 02 ], [ 09, 02 ], [ 04, 03 ],
+			     [ 05, 03 ], [ 06, 03 ], [ 07, 03 ], [ 08, 03 ], [ 09, 03 ],
+			     [ 01, 04 ], [ 02, 04 ], [ 03, 04 ], [ 04, 04 ], [ 08, 04 ],
+			     [ 01, 05 ], [ 03, 05 ], [ 05, 05 ], [ 06, 05 ], [ 07, 05 ],
+			     [ 08, 05 ], [ 01, 06 ], [ 03, 06 ], [ 04, 06 ], [ 05, 06 ],
+			     [ 06, 06 ], [ 08, 06 ], [ 09, 06 ], [ 01, 07 ], [ 03, 07 ],
+			     [ 04, 07 ], [ 05, 07 ], [ 06, 07 ], [ 07, 07 ], [ 09, 07 ],
+			     [ 01, 08 ], [ 02, 08 ], [ 04, 08 ], [ 05, 08 ], [ 06, 08 ],
+			     [ 07, 08 ], [ 09, 08 ], [ 02, 09 ], [ 03, 09 ], [ 04, 09 ],
+			     [ 05, 09 ], [ 07, 09 ], [ 09, 09 ], [ 01, 09 ], [ 02, 10 ],
+			     [ 06, 10 ], [ 07, 10 ], [ 08, 10 ], [ 09, 10 ], [ 02, 11 ],
+			     [ 03, 11 ], [ 04, 11 ], [ 05, 11 ], [ 06, 11 ] ],
+		    start: [ 08, 01 ],
+		    crate: [ [ 04, 06 ], [ 06, 06 ], [ 05, 07 ], [ 04, 08 ], [ 06, 08 ] ],
+		    dots: [ [ 04, 04 ], [ 02, 08 ], [ 08, 06 ], [ 05, 07 ], [ 06, 10] ]
+		  }]  
 
 
 var mobile = false;
@@ -56,6 +74,38 @@ var pad = function (num, size) {
     var s = num+"";
     while (s.length < size) s = "0" + s;
     return s;
+}
+
+
+function User() {
+    this.name;
+    this.currentLevel;
+    this.levelScores = [ ];
+
+    this.saveUserData = function(username, currentLevel, levelScores) {
+	localStorage.Name = username;
+	localStorage.Level = currentLevel;
+	localStorage.Scores = levelScores;
+    }
+
+    this.loadUserData = function() {
+	this.name = localStorage.Name;
+	this.currentLevel = localStorage.Level
+    }
+    
+    this.promptForUserData = function() {
+	this.name = prompt("What is your name?");
+	this.currentLevel = 0;
+	this.saveUserData(this.username, this.currentLevel, this.levelScores);
+    }
+
+    this.init = function() {
+	if (localStorage.Name) {
+	    this.loadUserData();
+	} else {
+	    this.promptForUserData();
+	}
+    }
 }
 
 function Coord(tileType, tileURL) {
@@ -89,42 +139,39 @@ function Sprite( xy ) {
     this.stepCount = 0;
 }
 
-function GameBoard(levelData) {
-    this.boardData = levelData;
+function GameBoard() {
     this.winCondition = false;
-    this.coordinates = [ ];
-    this.crates = [ ];
+    this.coordinates = [];
+    this.crates = [];
 
     this.$canvasJQ = $('<canvas></canvas>');
     this.canvas = this.$canvasJQ[0];
     this.context = this.canvas.getContext("2d");
-    this.canvas.width = this.boardData.dimension * cellWidth;
-    this.canvas.height = this.boardData.dimension * cellWidth;
-    this.canvas.style.position = "absolute";
-    this.canvas.style.left = 0;
-    this.canvas.style.top = 0;
-    this.canvas.style.zIndex = "10";
 
+    	
     this.$elementJQ = $('<section></section>').attr( 'id', "container" );
     this.element = this.$elementJQ[0];
     this.element.style.position = "absolute";
-    this.element.style.left = 0;
-    this.element.style.top = 0;
-    this.element.style.zIndex = "0";
-    for ( var ii = 0; ii < this.boardData.dimension; ii++ ) {
-	for ( var jj = 0; jj < this.boardData.dimension; jj++ ) {
-	    this.coordinates.push( [ ] );
-	    this.coordinates[jj].push( new Coord( "wall", wallURL ) );
-	    this.$elementJQ.append( this.coordinates[jj][ii].$div );
-	}
-    }
-
-
-
+    
     /* * * * * * * * * * * * * * * *
      * * * * Member Methods  * * * *
      * * * * * * * * * * * * * * * */
-
+    this.clearTheBoard = function() {
+	for ( var ii = 0; ii < this.coordinates.length; ii++ ) {
+	    console.log("this is happening");
+	    delete this.coordinates[ii];
+	}
+	this.coordinates = [];
+	for ( var ii = 0; ii < this.crates.length; ii++ ) {
+	    delete this.crates[ii];
+	}
+	this.crates = [];
+	delete this.sprite;
+	this.$elementJQ.empty();
+	this.winCondition = false;
+    }
+    
+    
     // Chrome needs me to access parameter arrays this way.
     this.updateCell = function( xy, tileType, tileURL, crateStatus) {
 	this.coordinates[ xy[0] ][ xy[1] ].tile = tileType;
@@ -133,7 +180,32 @@ function GameBoard(levelData) {
 
     }
 
-    this.init = function() {
+    this.init = function( levelData ) {
+	this.boardData = levelData;
+	this.canvas.width = this.boardData.dimension * cellWidth;
+	this.canvas.height = this.boardData.dimension * cellWidth;
+	this.canvas.style.position = "absolute";
+	this.canvas.style.left = 0;
+	this.canvas.style.top = 0;
+	this.canvas.style.zIndex = "10";
+	
+	this.element.style.left = 0;
+	this.element.style.top = 0;
+	this.element.style.zIndex = "0";
+
+	// This is where we will change CSS element width and height
+	
+	// Clear any existing data
+	this.clearTheBoard();
+	
+	for ( var ii = 0; ii < this.boardData.dimension; ii++ ) {
+	    for ( var jj = 0; jj < this.boardData.dimension; jj++ ) {
+		this.coordinates.push( [ ] );
+		this.coordinates[jj].push( new Coord( "wall", wallURL ) );
+		this.$elementJQ.append( this.coordinates[jj][ii].$div );
+	    }
+	}
+	
 	// update floor tiles
 	for ( var ii = 0; ii < this.boardData.floor.length; ii++ ) {
 	    this.updateCell(this.boardData.floor[ii], "floor", floorURL, false );
@@ -142,16 +214,17 @@ function GameBoard(levelData) {
 	for ( var ii = 0; ii < this.boardData.dots.length; ii++ ) {
 	    this.updateCell(this.boardData.dots[ii], "dot", dotsURL, false );
 	}
-
+	
 	// make our crates
 	for ( var ii = 0; ii < this.boardData.crate.length; ii++ ) {
 	    this.crates.push( new Crate( this.boardData.crate[ii] ) );
-	    this.crates[ii].onDot = this.coordinates[ this.boardData.crate[ii][0] ][ this.boardData.crate[ii][1] ].isADot();
+	    this.crates[ii].onDot =
+		this.coordinates[ this.boardData.crate[ii][0] ][ this.boardData.crate[ii][1] ].isADot();
 	    this.coordinates[ this.boardData.crate[ii][0] ][ this.boardData.crate[ii][1] ].hasCrate = true;
 	    if ( this.crates[ii].onDot) {
 		this.crates[ii].$crateImg.attr('src', crateOnDotURL );
 	    }
-
+	    
 	}
 
 	// make a sprite
@@ -197,9 +270,11 @@ function GameBoard(levelData) {
 	    this.crates[crateIndex].$crateImg.attr('src', crateOnDotURL );
 	} else {
 	    this.crates[crateIndex].onDot = false;
+	    this.crates[crateIndex].$crateImg.attr('src', crateURL );
 	}
 
 	this.winCondition = this.checkWinCondition();
+	
 
     }
 
@@ -299,20 +374,41 @@ function GameBoard(levelData) {
 var BOXER_GAME_MODULE = (function() {
     var my = {};
     my.$anchor = $( "#gameBoard" );
+    my.user = new User();
+    my.game = new GameBoard( );
 
     // I don't really understand window.onload behavior
     // so I'm probably doing this wrong.
     window.onload = function () {
-	my.game = new GameBoard( levelData[0] );
-	my.game.init();
+	my.user.init();
+	my.game.init( levelData[my.user.currentLevel] );
 	my.$anchor.append( my.game.$elementJQ );
 	my.$anchor.append( my.game.$canvasJQ );
     }
 
+    my.reInitializeGameBoard = function( user, game ) {
+	my.$anchor.empty();
+	user.init();
+	game.init( levelData[user.currentLevel] );
+	my.$anchor.append( game.$elementJQ );
+	my.$anchor.append( game.$canvasJQ );
+	
+    }
+    
+    my.advanceTheUser = function ( user, game ) {
+	user.currentLevel++;
+	user.levelScores.push( game.sprite.stepCount );
+	user.saveUserData( user.name, user.currentLevel, user.levelScores );
+    }
+    
     my.processInput = function(key) {
 	var keyvalue = key.keyCode;
 	var xy = [ (my.game.sprite.x / cellWidth), (my.game.sprite.y / cellWidth) ];
-	if ( listenToKeystrokes  && !my.game.winCondition ) {
+
+	if ( my.game.winCondition ) {
+	    my.advanceTheUser( my.user, my.game );
+	    my.reInitializeGameBoard( my.user,my.game );
+	} else if ( listenToKeystrokes ) {
 	    if (keyvalue == 37) {
 		console.log("left");
 		deltaXY = [ -1, 0 ];
@@ -330,6 +426,7 @@ var BOXER_GAME_MODULE = (function() {
 	    }
 	    my.game.tryToMove( xy, deltaXY );
 	}
+
     }
 
 
