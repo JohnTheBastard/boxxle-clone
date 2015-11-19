@@ -208,6 +208,7 @@ function GameBoard(levelData) {
 	var frames = cellWidth;
 
 	if ( withCrate ) {
+
 	    var crateIndex = self.findCrate([ x + deltaXY[0]*cellWidth ,  y + deltaXY[1]*cellWidth ]);
 	    var xCrate = self.crates[crateIndex].x;
 	    var yCrate = self.crates[crateIndex].y;
