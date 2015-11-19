@@ -126,7 +126,18 @@ var levelData = [ { dimension: 10,
 	         start: [ 01, 03 ],
 	         crate: [ [ 03, 02 ], [ 04, 02 ], [ 05, 02 ], [ 03, 03 ], [ 02, 04 ] ],
 	         dots:  [ [ 04, 03 ], [ 05, 03 ], [ 03, 04 ], [ 04, 04 ], [ 05, 04 ] ]
-	       }   ]
+	       } ,
+				 { dimension: 10,
+			     floor: [ [ 01, 01 ], [ 02, 01 ], [ 07, 01 ], [ 08, 01 ], [ 09, 01 ],
+				      [ 00, 02 ], [ 01, 02 ], [ 02, 02 ], [ 07, 02 ], [ 08, 02 ],
+						  [ 09, 02 ], [ 00, 03 ], [ 01, 03 ], [ 02, 03 ], [ 03, 03 ],
+						  [ 04, 03 ], [ 05, 03 ], [ 06, 03 ], [ 07, 03 ], [ 08, 03 ],
+						  [ 09, 03 ], [ 01, 04 ], [ 02, 04 ], [ 03, 04 ], [ 04, 04 ],
+						  [ 06, 04 ], [ 07, 04 ], [ 08, 04 ] ],
+					 start: [ 07, 04 ],
+					 crate: [ [ 01, 02 ], [ 02, 03 ], [ 07, 02 ], [ 08, 03 ] ],
+				   dots: [ [ 03, 03 ], [ 04, 03 ], [ 05, 03 ], [ 06, 03 ] ]
+				 }    ]
 
 
 var mobile = false;
@@ -398,7 +409,7 @@ var BOXER_GAME_MODULE = (function() {
     // I don't really understand window.onload behavior
     // so I'm probably doing this wrong.
     window.onload = function () {
-	my.game = new GameBoard( levelData[8] );
+	my.game = new GameBoard( levelData[9] );
 	my.game.init();
 	my.$anchor.append( my.game.$elementJQ );
 	my.$anchor.append( my.game.$canvasJQ );
