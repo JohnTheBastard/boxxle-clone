@@ -255,8 +255,10 @@ var levelData = [ { dimension: 10,
 											    [ 07, 01 ], [ 07, 02 ], [ 07, 03 ], [ 07, 04 ], [ 07, 05 ],
 						 							[ 08, 01 ], [ 08, 02 ], [ 08, 03 ], [ 08, 04 ], [ 08, 05 ] ]
 												}  ]
-
-
+var easyLevelsString = JSON.stringify(easyLevels);
+var hardLevelsString = JSON.stringify(hardLevels);
+var levelDataObject = JSON.parse(easyLevelsString);
+console.log(levelDataObject.levelDataEasy[0].dimension)
 var mobile = false;
 if ( mobile ) {
     var cellWidth = 16;
