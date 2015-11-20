@@ -22,29 +22,39 @@ var crateOnDotURL = "img/WoodenCrateOnDot.png"
 var dotsURL  = "img/DotTile.png";
 var spriteURL = "img/Sprite.gif";
 
-// We want our coordinates to be 4-digit strings, so
-// we need to pad single digits with a leading zero.
 var pad = function (num, size) {
     var s = num+"";
     while (s.length < size) s = "0" + s;
     return s;
 }
 
+var removeClass = function() {
+    $('#hiddenlist').removeClass('hide');
+    $('#gameboyIMG').removeClass('hide');
+}
+
+
+var welcomeBack = function() {
+    var name = JSON.parse( localStorage.getItem( "Name" ) ); 
+    var welcome = ('<p class="welcome"> Welcome back, ' + name + '. To continue ' +
+		   'playing from your last game, click the Gameboy or the "Play" tab above. ' +
+		   'If you would like to start over, please clear your web data. </p>');
+    $('.initialParagraphs').remove();
+    $('#user').replaceWith(welcome);
+
+}
 
 function User() {
-    this.name;
     this.currentLevel = 0;
     this.levelScores = { easy: [ ], hard: [ ] };
     this.difficulty = "easy";
 
     this.saveData = function() {
-	// For some reason, two copies of each item is
-	// getting written to local storage
-	// console.log("just got called");
-	localStorage.setItem("Name", JSON.stringify( this.name ) );
+	// localStorage.setItem("Name", JSON.stringify( this.name ) );
 	localStorage.setItem("Level", JSON.stringify( this.currentLevel ) );
 	localStorage.setItem("Scores", JSON.stringify( this.levelScores ) );
 	localStorage.setItem("Difficulty", JSON.stringify(this.difficulty ) );
+	localStorage.setItem("Initialized", JSON.stringify( 'true' ) );
     }
 
     this.loadData = function() {
@@ -54,24 +64,22 @@ function User() {
 	this.difficulty = JSON.parse( localStorage.getItem( "Difficulty" ) );
     }
     
-    this.promptForData = function() {
-	//this.name = prompt("What is your name?");
-	this.name = "John";
-	this.currentLevel = 0;
-	for( var ii=0; ii < levelData.easy.length; ii++ ) {
-	    this.levelScores.easy[ii] = 0;
-	}
-	for( var ii=0; ii < levelData.hard.length; ii++ ) {
-	    this.levelScores.hard[ii] = 0;
-	}
-	this.saveData();
-    }
 
     this.init = function() {
-	if ( localStorage.getItem("Name") === null ) {
-	    this.promptForData();
+	if ( !Boolean( JSON.parse(localStorage.getItem("Initialized") ) ) ) {
+	    console.log(Boolean( JSON.parse(localStorage.getItem("Initialized") ) ) + " And I made it.");
+	    for( var ii=0; ii < levelData.easy.length; ii++ ) {
+		this.levelScores.easy[ii] = 0;
+	    }
+	    for( var ii=0; ii < levelData.hard.length; ii++ ) {
+		this.levelScores.hard[ii] = 0;
+	    }
+	    this.saveData();
 	} else {
+	    console.log(Boolean( JSON.parse(localStorage.getItem("Initialized") ) ) + " And I didn't make it.");
+	    removeClass();
 	    this.loadData();
+	    welcomeBack();
 	}
     }
 }
@@ -221,10 +229,6 @@ function GameBoard() {
 	    }
 	}
 	if ( onDotCounter == this.crates.length ) {
-	    // win condition satisfied!!
-	    // trigger end of level
-	    console.log("You win!");
-	    console.log("You used " + this.sprite.stepCount + " steps.");
 	    return true;
 	} else {
 	    return false;
@@ -367,14 +371,18 @@ var BOXER_GAME_MODULE = (function() {
     
     
     my.advanceTheUser = function () {
-	console.log("break");
+	var winMessage = '<p id ="winner"> Congrats!!!! You beat level ' + (my.user.currentLevel + 1)  +
+	    ' in ' + my.game.sprite.stepCount + ' steps. Press any key to move on to the next level. </p>';
+	$('#gameplay').empty();
+	$('#gameplay').append(winMessage);
+	
+	console.log( "break: advanceTheUser " );
 	if ( my.user.levelScores[my.user.difficulty][my.user.currentLevel] > my.game.sprite.stepCount
 	     && 0 < my.user.levelScores[my.user.difficulty][my.user.currentLevel] ) {
 	    my.user.levelScores[my.user.difficulty][my.user.currentLevel ] = my.game.sprite.stepCount;
 	}
-	
-	console.log("wtf");
 	if( my.user.currentLevel < ( levelData[my.user.difficulty].length - 1 ) ) {
+	    my.user.levelScores[my.user.difficulty][my.user.currentLevel ] = my.game.sprite.stepCount;
 	    my.user.currentLevel++;
 	} else if( my.user.difficulty == "easy"
 		    && my.user.currentLevel == levelData[my.user.difficulty].length -1) {
@@ -388,6 +396,14 @@ var BOXER_GAME_MODULE = (function() {
 	}
 
 	my.user.saveData();
+    }
+
+    function addCurrentStatus() {
+	$('#counter').empty();
+	var status ='<p class="current"> Difficulty: ' + my.user.difficulty
+	    + '<p> Level: ' + (my.user.currentLevel + 1) + '<p> Steps: '
+	    + my.game.sprite.stepCount + '</p>';
+      $('#counter').append(status);
     }
     
     my.processInput = function(key) {
@@ -404,19 +420,28 @@ var BOXER_GAME_MODULE = (function() {
 	    if (keyvalue == 37) {
 		console.log("left");
 		deltaXY = [ -1, 0 ];
+		my.game.tryToMove( xy, deltaXY );
 	    } else if (keyvalue == 38) {
 		console.log("up");
 		deltaXY = [ 0, -1 ];
+		my.game.tryToMove( xy, deltaXY );
 	    } else if (keyvalue == 39) {
 		console.log("right");
 		deltaXY = [ 1, 0 ];
+		my.game.tryToMove( xy, deltaXY );
 	    } else if (keyvalue == 40) {
  		console.log("down");
 		deltaXY = [ 0, 1 ];
-	    } else {
-		return;
+		my.game.tryToMove( xy, deltaXY );
 	    }
-	    my.game.tryToMove( xy, deltaXY );
+	    
+	    if (keyvalue == 13) {
+		my.game.draw();
+	    } else if (keyvalue == 32) {
+		$('#gameplay').empty();
+	    }
+
+	    addCurrentStatus();
 	}
 
     }
