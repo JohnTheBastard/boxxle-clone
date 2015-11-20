@@ -20,7 +20,8 @@ var floorURL = "img/FloorTile.png";
 var crateURL = "img/WoodenCrate.png";
 var crateOnDotURL = "img/WoodenCrateOnDot.png"
 var dotsURL  = "img/DotTile.png";
-var spriteURL = "img/Sprite.png";
+//var spriteURL = "img/Sprite.png";
+var spriteURL = "img/Sprite.gif";
 
 // We want our coordinates to be 4-digit strings, so
 // we need to pad single digits with a leading zero.
