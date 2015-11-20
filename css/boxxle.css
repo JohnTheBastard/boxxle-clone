@@ -14,6 +14,23 @@
     background-color: #ccc;
 }
 
+#counter {
+  float: right;
+  display: inline-block;
+  border: 10px solid black;
+  margin: 0 300px 0 -50px;
+  max-width: 90%;
+  text-align: center;
+  width: 150px;
+  height: 150px;
+  background-color: #ccc;
+  color: black;
+}
+
+.current {
+  margin-top: 20px;
+}
+
 
 #container {
   height: auto;

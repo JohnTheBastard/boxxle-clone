@@ -364,6 +364,7 @@ var BOXER_GAME_MODULE = (function() {
     my.$anchor = $( "#gameBoard" );
     my.user = new User();
     my.game = new GameBoard( );
+    my.currentStatus = "";
 
 
     my.initializeGameBoard = function() {
@@ -382,8 +383,7 @@ var BOXER_GAME_MODULE = (function() {
     window.onload = function () {
 	my.initializeGameBoard();
     }
-    console.log(my.user.difficulty);
-    console.log(my.user.currentLevel);
+
 
 
     my.advanceTheUser = function () {
@@ -405,6 +405,14 @@ var BOXER_GAME_MODULE = (function() {
 
     my.removePlayParagraphs = function() {
       $('#gameplay').remove();
+    }
+
+    my.addCurrentStatus = function() {
+      var currentLevel = Number(localStorage.Level) ;
+      $('#counter').empty();
+      my.currentStatus ='<p class="current"> Level Difficulty = ' + localStorage.Difficulty +
+      '<p> Current Level = ' + (currentLevel + 1) + '<p> Steps Counter =  ' + steps + '</p>';
+      $('#counter').append(my.currentStatus);
     }
 
 
@@ -447,6 +455,7 @@ var BOXER_GAME_MODULE = (function() {
 	    }
 	    my.game.tryToMove( xy, deltaXY );
         console.log(steps);
+      my.addCurrentStatus();
 	}
 
     }
