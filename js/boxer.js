@@ -20,7 +20,7 @@ var floorURL = "img/FloorTile.png";
 var crateURL = "img/WoodenCrate.png";
 var crateOnDotURL = "img/WoodenCrateOnDot.png"
 var dotsURL  = "img/DotTile.png";
-var spriteURL = "img/Sprite.png";
+var spriteURL = "img/Sprite.gif";
 var steps = 0;
 
 
