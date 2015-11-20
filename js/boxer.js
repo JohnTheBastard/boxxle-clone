@@ -7,7 +7,7 @@
  * * * * * * * * * * * * * * * */
 
 // all level data: this will eventually be moved to a JSON file
-var levelData = [ { dimension: 10,
+var levelData = [ { dimension: 9,
 		    floor: [ [ 01, 01 ], [ 02, 01 ], [ 03, 01 ], [ 01, 02 ],
 			     [ 02, 02 ], [ 03, 02 ], [ 01, 03 ], [ 02, 03 ],
 			     [ 03, 03 ], [ 07, 03 ], [ 03, 04 ], [ 07, 04 ],
@@ -413,6 +413,9 @@ var BOXER_GAME_MODULE = (function() {
     my.processInput = function(key) {
 	var keyvalue = key.keyCode;
 	var xy = [ (my.game.sprite.x / cellWidth), (my.game.sprite.y / cellWidth) ];
+	
+	// Keep key input from scrolling
+	key.preventDefault();
 
 	if ( my.game.winCondition ) {
 	    my.advanceTheUser( my.user, my.game );
@@ -438,13 +441,27 @@ var BOXER_GAME_MODULE = (function() {
 
     }
 
+    my.scaleGameBoard = function() {
+	var buffer = ( $('header').height() + $('footer').height() ) * 2;
+	var frameHeight = $(window).height() - buffer;
+	var frameWidth = $(window).width();
+	var frameSize = Math.min( frameHeight, frameWidth );
+	var scale;
 
-    my.eventListener= function() {
-	window.addEventListener("keydown", my.processInput, false);
-	// prevent scrolling (doesn't work yet)
-	document.body.addEventListener("scroll", function(e){e.preventDefault();});
+	if ( my.game.boardDimensionInPixels < frameSize ) {
+	    scale =  1;
+	} else {
+	    scale = ( frameSize / my.game.boardDimensionInPixels ).toFixed(2);
+	    my.$anchor.parent().css( 'transform', 'scale( ' + scale + ', ' + scale + ')');
+	}
     }
-    my.eventListener();
+    
+
+    my.eventListeners= function() {
+	window.addEventListener("keydown", my.processInput, false);
+	window.addEventListener("resize",  my.scaleGameBoard, false );
+    }
+    my.eventListeners();
 
     return my;
 })();
