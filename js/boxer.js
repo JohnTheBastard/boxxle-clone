@@ -32,7 +32,7 @@ var pad = function (num, size) {
 
 
 function User() {
-    this.name = "John";
+    this.name;
     this.currentLevel = 0;
     this.levelScores = { easy: [ ], hard: [ ] };
     this.difficulty = "easy";
@@ -56,6 +56,7 @@ function User() {
     
     this.promptForData = function() {
 	//this.name = prompt("What is your name?");
+	this.name = "John";
 	this.currentLevel = 0;
 	for( var ii=0; ii < levelData.easy.length; ii++ ) {
 	    this.levelScores.easy[ii] = 0;
@@ -67,10 +68,10 @@ function User() {
     }
 
     this.init = function() {
-	if (false) {
-	    this.loadData();
-	} else {
+	if ( localStorage.getItem("Name") === null ) {
 	    this.promptForData();
+	} else {
+	    this.loadData();
 	}
     }
 }
@@ -366,11 +367,13 @@ var BOXER_GAME_MODULE = (function() {
     
     
     my.advanceTheUser = function () {
-	if ( my.user.levelScores[my.user.difficulty][my.user.currentLevel] < my.game.sprite.stepCount
-	     && my.game.sprite.stepCount > 0 ) {
+	console.log("break");
+	if ( my.user.levelScores[my.user.difficulty][my.user.currentLevel] > my.game.sprite.stepCount
+	     && 0 < my.user.levelScores[my.user.difficulty][my.user.currentLevel] ) {
 	    my.user.levelScores[my.user.difficulty][my.user.currentLevel ] = my.game.sprite.stepCount;
 	}
 	
+	console.log("wtf");
 	if( my.user.currentLevel < ( levelData[my.user.difficulty].length - 1 ) ) {
 	    my.user.currentLevel++;
 	} else if( my.user.difficulty == "easy"
