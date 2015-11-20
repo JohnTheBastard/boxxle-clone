@@ -32,42 +32,43 @@ var pad = function (num, size) {
 
 
 function User() {
-    this.name ="";
+    this.name = "John";
     this.currentLevel = 0;
     this.levelScores = { easy: [ ], hard: [ ] };
     this.difficulty = "easy";
 
-    this.saveUserData = function() {
-	localStorage.Name = this.username;
-	localStorage.Level = this.currentLevel;
-	localStorage.Scores = this.levelScores;
-	localStorage.Difficulty = this.difficulty;
+    this.saveData = function() {
+	console.log("just got called");
+	localStorage.setItem("Name", JSON.stringify( this.name ) );
+	localStorage.setItem("Level", JSON.stringify( this.currentLevel ) );
+	localStorage.setItem("Scores", JSON.stringify( this.levelScores ) );
+	localStorage.setItem("Difficulty", JSON.stringify(this.difficulty ) );
     }
 
-    this.loadUserData = function() {
-	this.name = localStorage.Name;
-	this.currentLevel = localStorage.Level;
-	this.levelScores = localStorage.Scores;
-	this.difficulty = localStorage.Difficulty;
+    this.loadData = function() {
+	this.name = JSON.parse( localStorage.getItem( "Name" ) );
+	this.currentLevel = JSON.parse( localStorage.getItem( "Level" ) );
+	this.levelScores = JSON.parse( localStorage.getItem( "Scores" ) );
+	this.difficulty = JSON.parse( localStorage.getItem( "Difficulty" ) );
     }
     
-    this.promptForUserData = function() {
-	this.name = prompt("What is your name?");
+    this.promptForData = function() {
+	//this.name = prompt("What is your name?");
 	this.currentLevel = 0;
-	for( var ii; ii < levelData.easy.length; ii++ ) {
+	for( var ii=0; ii < levelData.easy.length; ii++ ) {
 	    this.levelScores.easy[ii] = 0;
 	}
-	for( var ii; ii < levelData.hard.length; ii++ ) {
+	for( var ii=0; ii < levelData.hard.length; ii++ ) {
 	    this.levelScores.hard[ii] = 0;
 	}
-	this.saveUserData();
+	this.saveData();
     }
 
     this.init = function() {
-	if (localStorage.Name) {
-	    this.loadUserData();
+	if (false) {
+	    this.loadData();
 	} else {
-	    this.promptForUserData();
+	    this.promptForData();
 	}
     }
 }
@@ -363,28 +364,25 @@ var BOXER_GAME_MODULE = (function() {
     
     
     my.advanceTheUser = function () {
-	console.log("break");
-	console.log(my.user.levelScores[my.user.difficulty][my.user.currentLevel]);
 	if ( my.user.levelScores[my.user.difficulty][my.user.currentLevel] < my.game.sprite.stepCount
 	     && my.game.sprite.stepCount > 0 ) {
 	    my.user.levelScores[my.user.difficulty][my.user.currentLevel ] = my.game.sprite.stepCount;
-	    console.log(my.user.levelScores[my.user.difficulty][my.user.currentLevel]);
 	}
 	
 	if( my.user.currentLevel < ( levelData[my.user.difficulty].length - 1 ) ) {
 	    my.user.currentLevel++;
 	} else if( my.user.difficulty == "easy"
-		    && my.user.currentLevel == levelData[my.user.difficulty] -1) {
+		    && my.user.currentLevel == levelData[my.user.difficulty].length -1) {
 	    my.user.difficulty = "hard";
 	    my.user.currentLevel = 0;
-	} else if( my.user.difficulty == "easy"
-		    && my.user.currentLevel == levelData[my.user.difficulty] - 1 ) {
+	} else if( my.user.difficulty == "hard"
+		    && my.user.currentLevel == levelData[my.user.difficulty].length - 1 ) {
 	    console.log("CONGRATULATIONS: You beat all the levels!" );
 	} else {
 	    console.log("Error: level index out of bounds");
 	}
 
-	my.user.saveUserData();
+	my.user.saveData();
     }
     
     my.processInput = function(key) {
