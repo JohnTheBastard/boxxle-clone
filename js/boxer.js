@@ -35,7 +35,7 @@ function User() {
     this.name;
     this.currentLevel;
     this.levelScores = { easy: [ ], hard: [ ] };
-    this.difficulty = "easy";
+    this.difficulty = "hard";
 
     this.saveUserData = function() {
 	localStorage.Name = this.username;
@@ -114,7 +114,7 @@ function GameBoard() {
      * * * * * * * * * * * * * * * */
     this.clearTheBoard = function() {
 	for ( var ii = 0; ii < this.coordinates.length; ii++ ) {
-	    console.log("this is happening");
+	    console.log("clearing board");
 	    delete this.coordinates[ii];
 	}
 	this.coordinates = [];
