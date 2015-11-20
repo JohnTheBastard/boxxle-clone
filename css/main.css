@@ -1,3 +1,8 @@
+
+
+
+
+
 /******************
       GENERAL
 ******************/
@@ -14,6 +19,38 @@ a {
   max-width: 100%;
 }
 
+#userData p {
+  width: 960px;
+  max-width: 90%;
+  text-align: center;
+  margin: 0 auto 20px auto;
+  color: white;
+}
+
+#user {
+  width: 300px;
+  max-width: 100%;
+  padding: 10px;
+  margin: 0 auto 20px auto;
+  text-align: center;
+}
+
+.hide {
+  visibility: hidden;
+}
+
+.welcome {
+  font-size: 1.5em;
+  font-family: sans-serif;
+}
+
+.playParagraphs {
+  width: 960px;
+  max-width: 90%;
+  text-align: center;
+  margin: 0 auto 20px auto;
+  color: white;
+}
 
 /******************
       HEADING

@@ -21,6 +21,8 @@ var crateURL = "img/WoodenCrate.png";
 var crateOnDotURL = "img/WoodenCrateOnDot.png"
 var dotsURL  = "img/DotTile.png";
 var spriteURL = "img/Sprite.png";
+var steps = 0;
+
 
 // We want our coordinates to be 4-digit strings, so
 // we need to pad single digits with a leading zero.
@@ -38,7 +40,7 @@ function User() {
     this.difficulty = "easy";
 
     this.saveUserData = function() {
-	localStorage.Name = this.username;
+	localStorage.Name = this.name;
 	localStorage.Level = this.currentLevel;
 	localStorage.Scores = this.levelScores;
 	localStorage.Difficulty = this.difficulty;
@@ -48,18 +50,43 @@ function User() {
 	this.name = localStorage.Name;
 	this.currentLevel = localStorage.Level
     }
-    
+
     this.promptForUserData = function() {
-	this.name = prompt("What is your name?");
+	this.name = $('#username').val();
+  console.log(this.name);
+  this.removeClass();
 	this.currentLevel = 0;
 	this.saveUserData();
     }
 
+    this.removeClass = function() {
+      this.hiddenclass = $('#hiddenlist');
+      this.hiddenclass.removeClass('hide');
+      this.hiddenIMG = $('#gameboyIMG');
+      this.hiddenIMG.removeClass('hide');
+    }
+
+    this.welcomeBack = function() {
+      this.hideFieldset = $('#user');
+      this.removeParagraphs = $('.initialParagraphs');
+      this.removeParagraphs.remove();
+      this.loadUserData();
+      this.welcome = ('<p class="welcome"> Welcome back ' + this.name + '. To continue ' +
+      'on your current level click the gameboy or the " Play " tab above.' +
+     ' If you would like to completely start over please clear your web data. </p>');
+     this.hideFieldset.replaceWith(this.welcome);
+
+    }
+
     this.init = function() {
 	if (localStorage.Name) {
+      this.removeClass();
 	    this.loadUserData();
+      this.welcomeBack();
 	} else {
-	    this.promptForUserData();
+      this.name='default';
+      this.currentLevel = 0;
+
 	}
     }
 }
@@ -104,11 +131,11 @@ function GameBoard() {
     this.canvas = this.$canvasJQ[0];
     this.context = this.canvas.getContext("2d");
 
-    	
+
     this.$elementJQ = $('<section></section>').attr( 'id', "container" );
     this.element = this.$elementJQ[0];
     this.element.style.position = "absolute";
-    
+
     /* * * * * * * * * * * * * * * *
      * * * * Member Methods  * * * *
      * * * * * * * * * * * * * * * */
@@ -126,8 +153,8 @@ function GameBoard() {
 	this.$elementJQ.empty();
 	this.winCondition = false;
     }
-    
-    
+
+
     // Chrome needs me to access parameter arrays this way.
     this.updateCell = function( xy, tileType, tileURL, crateStatus) {
 	this.coordinates[ xy[0] ][ xy[1] ].tile = tileType;
@@ -145,7 +172,7 @@ function GameBoard() {
 	this.canvas.style.left = 0;
 	this.canvas.style.top = 0;
 	this.canvas.style.zIndex = "10";
-	
+
 	this.element.style.left = 0;
 	this.element.style.top = 0;
 	this.element.style.zIndex = "0";
@@ -153,10 +180,10 @@ function GameBoard() {
 	// This is where we will change CSS element width and height
 
 
-	
+
 	// Clear any existing data
 	this.clearTheBoard();
-	
+
 	for ( var ii = 0; ii < this.boardData.dimension; ii++ ) {
 	    for ( var jj = 0; jj < this.boardData.dimension; jj++ ) {
 		this.coordinates.push( [ ] );
@@ -164,7 +191,7 @@ function GameBoard() {
 		this.$elementJQ.append( this.coordinates[jj][ii].$div );
 	    }
 	}
-	
+
 	// update floor tiles
 	for ( var ii = 0; ii < this.boardData.floor.length; ii++ ) {
 	    this.updateCell(this.boardData.floor[ii], "floor", floorURL, false );
@@ -173,7 +200,7 @@ function GameBoard() {
 	for ( var ii = 0; ii < this.boardData.dots.length; ii++ ) {
 	    this.updateCell(this.boardData.dots[ii], "dot", dotsURL, false );
 	}
-	
+
 	// make our crates
 	for ( var ii = 0; ii < this.boardData.crate.length; ii++ ) {
 	    this.crates.push( new Crate( this.boardData.crate[ii] ) );
@@ -183,7 +210,7 @@ function GameBoard() {
 	    if ( this.crates[ii].onDot) {
 		this.crates[ii].$crateImg.attr('src', crateOnDotURL );
 	    }
-	    
+
 	}
 
 	// make a sprite
@@ -233,7 +260,7 @@ function GameBoard() {
 	}
 
 	this.winCondition = this.checkWinCondition();
-	
+
 
     }
 
@@ -247,6 +274,7 @@ function GameBoard() {
     }
 
     this.move = function(deltaXY, withCrate) {
+    steps++;
 	listenToKeystrokes = false;
 	var x = this.sprite.x;
 	var y = this.sprite.y;
@@ -276,6 +304,7 @@ function GameBoard() {
 
 	var interval = setInterval(function(){
 	    counter++;
+
 	    drawFrame(counter/frames);
 	}, 256 / cellWidth );
 
@@ -335,7 +364,8 @@ var BOXER_GAME_MODULE = (function() {
     my.$anchor = $( "#gameBoard" );
     my.user = new User();
     my.game = new GameBoard( );
-    
+
+
     my.initializeGameBoard = function() {
 	my.$anchor.empty();
 	my.user.init();
@@ -352,8 +382,10 @@ var BOXER_GAME_MODULE = (function() {
     window.onload = function () {
 	my.initializeGameBoard();
     }
-    
-    
+    console.log(my.user.difficulty);
+    console.log(my.user.currentLevel);
+
+
     my.advanceTheUser = function () {
 	if( my.user.currentLevel < ( levelData[my.user.difficulty].length - 1 ) ) {
 	    my.user.currentLevel++;
@@ -370,19 +402,35 @@ var BOXER_GAME_MODULE = (function() {
 	my.user.levelScores[my.user.difficulty].push( my.game.sprite.stepCount );
 	my.user.saveUserData();
     }
-    
+
+    my.removePlayParagraphs = function() {
+      $('#gameplay').remove();
+    }
+
+
     my.processInput = function(key) {
+
 	var keyvalue = key.keyCode;
 	var xy = [ (my.game.sprite.x / cellWidth), (my.game.sprite.y / cellWidth) ];
-	
+
 	// Keep key input from scrolling
 	key.preventDefault();
 
 	if ( my.game.winCondition ) {
+      steps=0;
 	    my.advanceTheUser();
 	    my.initializeGameBoard();
 	} else if ( listenToKeystrokes ) {
-	    if (keyvalue == 37) {
+      if (keyvalue == 13) {
+        console.log("loadpage");
+        steps--;
+        deltaXY = [ 0, 0 ];
+      } else if (keyvalue == 32) {
+        steps--;
+        my.removePlayParagraphs();
+        deltaXY = [ 0, 0 ];
+      }
+      else if (keyvalue == 37) {
 		console.log("left");
 		deltaXY = [ -1, 0 ];
 	    } else if (keyvalue == 38) {
@@ -398,6 +446,7 @@ var BOXER_GAME_MODULE = (function() {
 		return;
 	    }
 	    my.game.tryToMove( xy, deltaXY );
+        console.log(steps);
 	}
 
     }
@@ -416,7 +465,7 @@ var BOXER_GAME_MODULE = (function() {
 	    my.$anchor.parent().css( 'transform', 'scale( ' + scale + ', ' + scale + ')');
 	}
     }
-    
+
     my.scaleGameBoard();
 
     my.eventListeners= function() {
