@@ -236,8 +236,11 @@ function GameBoard() {
 	    }
 	}
 	if ( onDotCounter == this.crates.length ) {
-	    // win condition satisfied!!
-	    // trigger end of level
+      this.onLevel = Number(localStorage.Level) ;
+      $('#gameplay').empty();
+      this.winner = '<p id ="winner"> Congrats!!!! You beat level ' + (this.onLevel + 1)  +
+      ' in ' + steps + ' steps. Press any key to move on to the next level. </p>';
+      $('#gameplay').append(this.winner);
 	    console.log("You win!");
 	    console.log("You used " + this.sprite.stepCount + " steps.");
 	    return true;
@@ -404,7 +407,7 @@ var BOXER_GAME_MODULE = (function() {
     }
 
     my.removePlayParagraphs = function() {
-      $('#gameplay').remove();
+      $('#gameplay').empty();
     }
 
     my.addCurrentStatus = function() {
@@ -425,6 +428,7 @@ var BOXER_GAME_MODULE = (function() {
 	key.preventDefault();
 
 	if ( my.game.winCondition ) {
+      $('#gameplay').empty();
       steps=0;
 	    my.advanceTheUser();
 	    my.initializeGameBoard();
