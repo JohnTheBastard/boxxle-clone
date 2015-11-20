@@ -38,7 +38,9 @@ function User() {
     this.difficulty = "easy";
 
     this.saveData = function() {
-	console.log("just got called");
+	// For some reason, two copies of each item is
+	// getting written to local storage
+	// console.log("just got called");
 	localStorage.setItem("Name", JSON.stringify( this.name ) );
 	localStorage.setItem("Level", JSON.stringify( this.currentLevel ) );
 	localStorage.setItem("Scores", JSON.stringify( this.levelScores ) );
