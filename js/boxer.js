@@ -20,7 +20,6 @@ var floorURL = "img/FloorTile.png";
 var crateURL = "img/WoodenCrate.png";
 var crateOnDotURL = "img/WoodenCrateOnDot.png"
 var dotsURL  = "img/DotTile.png";
-//var spriteURL = "img/Sprite.png";
 var spriteURL = "img/Sprite.gif";
 
 // We want our coordinates to be 4-digit strings, so
@@ -33,10 +32,10 @@ var pad = function (num, size) {
 
 
 function User() {
-    this.name;
-    this.currentLevel;
+    this.name ="";
+    this.currentLevel = 0;
     this.levelScores = { easy: [ ], hard: [ ] };
-    this.difficulty = "hard";
+    this.difficulty = "easy";
 
     this.saveUserData = function() {
 	localStorage.Name = this.username;
@@ -47,12 +46,20 @@ function User() {
 
     this.loadUserData = function() {
 	this.name = localStorage.Name;
-	this.currentLevel = localStorage.Level
+	this.currentLevel = localStorage.Level;
+	this.levelScores = localStorage.Scores;
+	this.difficulty = localStorage.Difficulty;
     }
     
     this.promptForUserData = function() {
 	this.name = prompt("What is your name?");
 	this.currentLevel = 0;
+	for( var ii; ii < levelData.easy.length; ii++ ) {
+	    this.levelScores.easy[ii] = 0;
+	}
+	for( var ii; ii < levelData.hard.length; ii++ ) {
+	    this.levelScores.hard[ii] = 0;
+	}
 	this.saveUserData();
     }
 
@@ -356,6 +363,14 @@ var BOXER_GAME_MODULE = (function() {
     
     
     my.advanceTheUser = function () {
+	console.log("break");
+	console.log(my.user.levelScores[my.user.difficulty][my.user.currentLevel]);
+	if ( my.user.levelScores[my.user.difficulty][my.user.currentLevel] < my.game.sprite.stepCount
+	     && my.game.sprite.stepCount > 0 ) {
+	    my.user.levelScores[my.user.difficulty][my.user.currentLevel ] = my.game.sprite.stepCount;
+	    console.log(my.user.levelScores[my.user.difficulty][my.user.currentLevel]);
+	}
+	
 	if( my.user.currentLevel < ( levelData[my.user.difficulty].length - 1 ) ) {
 	    my.user.currentLevel++;
 	} else if( my.user.difficulty == "easy"
@@ -368,7 +383,7 @@ var BOXER_GAME_MODULE = (function() {
 	} else {
 	    console.log("Error: level index out of bounds");
 	}
-	my.user.levelScores[my.user.difficulty].push( my.game.sprite.stepCount );
+
 	my.user.saveUserData();
     }
     
