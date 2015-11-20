@@ -6,52 +6,6 @@
  * CF201       Fall 2015       *
  * * * * * * * * * * * * * * * */
 
-// all level data: this will eventually be moved to a JSON file
-var levelData = [ { dimension: 9,
-		    floor: [ [ 01, 01 ], [ 02, 01 ], [ 03, 01 ], [ 01, 02 ],
-			     [ 02, 02 ], [ 03, 02 ], [ 01, 03 ], [ 02, 03 ],
-			     [ 03, 03 ], [ 07, 03 ], [ 03, 04 ], [ 07, 04 ],
-			     [ 03, 05 ], [ 04, 05 ], [ 05, 05 ], [ 06, 05 ],
-			     [ 07, 05 ], [ 02, 06 ], [ 03, 06 ], [ 04, 06 ],
-			     [ 06, 06 ], [ 07, 06 ], [ 02, 07 ], [ 03, 07 ],
-			     [ 04, 07 ] ],
-		    start: [ 01, 01 ],
-		    crate: [ [ 02, 02 ], [ 03, 02 ], [ 02, 03 ] ],
-		    dots:  [ //[ 02, 02 ], [ 03, 02 ], [ 03, 03 ] ]
-		             [ 07, 03 ], [ 07, 04 ], [ 07, 05 ] ]
-		  },
-		  { dimension: 10,
-		    floor: [ [ 01, 01 ], [ 02, 01 ], [ 03, 01 ], [ 04, 01 ], [ 05, 01 ],
-			     [ 06, 01 ], [ 07, 01 ], [ 08, 01 ], [ 01, 02 ], [ 02, 02 ],
-			     [ 03, 02 ], [ 04, 02 ], [ 05, 02 ], [ 07, 02 ], [ 08, 02 ],
-			     [ 01, 03 ], [ 02, 03 ], [ 04, 03 ], [ 07, 03 ], [ 01, 04 ],
-			     [ 02, 04 ], [ 03, 04 ], [ 04, 04 ], [ 05, 04 ], [ 06, 04 ],
-			     [ 07, 04 ], [ 05, 05 ], [ 07, 05 ], [ 03, 06 ], [ 04, 06 ],
-			     [ 05, 06 ], [ 06, 06 ], [ 07, 06 ], [ 03, 07 ], [ 04, 07 ],
-			     [ 05, 07 ], [ 06, 07 ], [ 07, 07 ], ],
-		    start: [ 06, 06 ],
-		    crate: [ [ 03, 02 ], [ 04, 03 ], [ 02, 04 ], [ 04, 06 ] ],
-		    dots: [ [ 01, 01 ], [ 02, 01 ], [ 01, 02 ], [ 02, 02 ], ]
-		  },
-		  { dimension: 13,
-		    floor: [ [ 08, 01 ], [ 09, 01 ], [ 08, 02 ], [ 09, 02 ], [ 04, 03 ],
-			     [ 05, 03 ], [ 06, 03 ], [ 07, 03 ], [ 08, 03 ], [ 09, 03 ],
-			     [ 01, 04 ], [ 02, 04 ], [ 03, 04 ], [ 04, 04 ], [ 08, 04 ],
-			     [ 01, 05 ], [ 03, 05 ], [ 05, 05 ], [ 06, 05 ], [ 07, 05 ],
-			     [ 08, 05 ], [ 01, 06 ], [ 03, 06 ], [ 04, 06 ], [ 05, 06 ],
-			     [ 06, 06 ], [ 08, 06 ], [ 09, 06 ], [ 01, 07 ], [ 03, 07 ],
-			     [ 04, 07 ], [ 05, 07 ], [ 06, 07 ], [ 07, 07 ], [ 09, 07 ],
-			     [ 01, 08 ], [ 02, 08 ], [ 04, 08 ], [ 05, 08 ], [ 06, 08 ],
-			     [ 07, 08 ], [ 09, 08 ], [ 02, 09 ], [ 03, 09 ], [ 04, 09 ],
-			     [ 05, 09 ], [ 07, 09 ], [ 09, 09 ], [ 01, 09 ], [ 02, 10 ],
-			     [ 06, 10 ], [ 07, 10 ], [ 08, 10 ], [ 09, 10 ], [ 02, 11 ],
-			     [ 03, 11 ], [ 04, 11 ], [ 05, 11 ], [ 06, 11 ] ],
-		    start: [ 08, 01 ],
-		    crate: [ [ 04, 06 ], [ 06, 06 ], [ 05, 07 ], [ 04, 08 ], [ 06, 08 ] ],
-		    dots: [ [ 04, 04 ], [ 02, 08 ], [ 08, 06 ], [ 05, 07 ], [ 06, 10] ]
-		  }]  
-
-
 var mobile = false;
 if ( mobile ) {
     var cellWidth = 16;
@@ -80,12 +34,14 @@ var pad = function (num, size) {
 function User() {
     this.name;
     this.currentLevel;
-    this.levelScores = [ ];
+    this.levelScores = { easy: [ ], hard: [ ] };
+    this.difficulty = "easy";
 
-    this.saveUserData = function(username, currentLevel, levelScores) {
-	localStorage.Name = username;
-	localStorage.Level = currentLevel;
-	localStorage.Scores = levelScores;
+    this.saveUserData = function() {
+	localStorage.Name = this.username;
+	localStorage.Level = this.currentLevel;
+	localStorage.Scores = this.levelScores;
+	localStorage.Difficulty = this.difficulty;
     }
 
     this.loadUserData = function() {
@@ -96,7 +52,7 @@ function User() {
     this.promptForUserData = function() {
 	this.name = prompt("What is your name?");
 	this.currentLevel = 0;
-	this.saveUserData(this.username, this.currentLevel, this.levelScores);
+	this.saveUserData();
     }
 
     this.init = function() {
@@ -379,12 +335,11 @@ var BOXER_GAME_MODULE = (function() {
     my.$anchor = $( "#gameBoard" );
     my.user = new User();
     my.game = new GameBoard( );
-
-    // I don't really understand window.onload behavior
-    // so I'm probably doing this wrong.
-    window.onload = function () {
+    
+    my.initializeGameBoard = function() {
+	my.$anchor.empty();
 	my.user.init();
-	my.game.init( levelData[my.user.currentLevel] );
+	my.game.init( levelData[my.user.difficulty][my.user.currentLevel] );
 	my.$anchor.append( my.game.$elementJQ );
 	my.$anchor.append( my.game.$canvasJQ );
 	$('#game').css( { 'width': my.game.boardDimensionInPixels - 10,
@@ -392,22 +347,28 @@ var BOXER_GAME_MODULE = (function() {
 	$('#container').css( 'width', my.game.boardDimensionInPixels );
     }
 
-    my.reInitializeGameBoard = function( user, game ) {
-	my.$anchor.empty();
-	user.init();
-	game.init( levelData[user.currentLevel] );
-	my.$anchor.append( game.$elementJQ );
-	my.$anchor.append( game.$canvasJQ );
-	$('#game').css( { 'width': game.boardDimensionInPixels - 10,
-			  'height': game.boardDimensionInPixels - 25 } );
-	$('#container').css( 'width', game.boardDimensionInPixels );
-	
+    // I don't really understand window.onload behavior
+    // so I'm probably doing this wrong.
+    window.onload = function () {
+	my.initializeGameBoard();
     }
     
-    my.advanceTheUser = function ( user, game ) {
-	user.currentLevel++;
-	user.levelScores.push( game.sprite.stepCount );
-	user.saveUserData( user.name, user.currentLevel, user.levelScores );
+    
+    my.advanceTheUser = function () {
+	if( my.user.currentLevel < ( levelData[my.user.difficulty].length - 1 ) ) {
+	    my.user.currentLevel++;
+	} else if( my.user.difficulty == "easy"
+		    && my.user.currentLevel == levelData[my.user.difficulty] -1) {
+	    my.user.difficulty = "hard";
+	    my.user.currentLevel = 0;
+	} else if( my.user.difficulty == "easy"
+		    && my.user.currentLevel == levelData[my.user.difficulty] - 1 ) {
+	    console.log("CONGRATULATIONS: You beat all the levels!" );
+	} else {
+	    console.log("Error: level index out of bounds");
+	}
+	my.user.levelScores[my.user.difficulty].push( my.game.sprite.stepCount );
+	my.user.saveUserData();
     }
     
     my.processInput = function(key) {
@@ -418,8 +379,8 @@ var BOXER_GAME_MODULE = (function() {
 	key.preventDefault();
 
 	if ( my.game.winCondition ) {
-	    my.advanceTheUser( my.user, my.game );
-	    my.reInitializeGameBoard( my.user,my.game );
+	    my.advanceTheUser();
+	    my.initializeGameBoard();
 	} else if ( listenToKeystrokes ) {
 	    if (keyvalue == 37) {
 		console.log("left");
@@ -456,6 +417,7 @@ var BOXER_GAME_MODULE = (function() {
 	}
     }
     
+    my.scaleGameBoard();
 
     my.eventListeners= function() {
 	window.addEventListener("keydown", my.processInput, false);
