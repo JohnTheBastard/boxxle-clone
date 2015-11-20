@@ -182,8 +182,9 @@ function GameBoard() {
 
     this.init = function( levelData ) {
 	this.boardData = levelData;
-	this.canvas.width = this.boardData.dimension * cellWidth;
-	this.canvas.height = this.boardData.dimension * cellWidth;
+	this.boardDimensionInPixels = this.boardData.dimension * cellWidth;
+	this.canvas.width = this.boardDimensionInPixels;
+	this.canvas.height = this.boardDimensionInPixels;
 	this.canvas.style.position = "absolute";
 	this.canvas.style.left = 0;
 	this.canvas.style.top = 0;
@@ -194,6 +195,8 @@ function GameBoard() {
 	this.element.style.zIndex = "0";
 
 	// This is where we will change CSS element width and height
+
+
 	
 	// Clear any existing data
 	this.clearTheBoard();
@@ -384,6 +387,9 @@ var BOXER_GAME_MODULE = (function() {
 	my.game.init( levelData[my.user.currentLevel] );
 	my.$anchor.append( my.game.$elementJQ );
 	my.$anchor.append( my.game.$canvasJQ );
+	$('#game').css( { 'width': my.game.boardDimensionInPixels - 10,
+			  'height': my.game.boardDimensionInPixels - 25 } );
+	$('#container').css( 'width', my.game.boardDimensionInPixels );
     }
 
     my.reInitializeGameBoard = function( user, game ) {
@@ -392,6 +398,9 @@ var BOXER_GAME_MODULE = (function() {
 	game.init( levelData[user.currentLevel] );
 	my.$anchor.append( game.$elementJQ );
 	my.$anchor.append( game.$canvasJQ );
+	$('#game').css( { 'width': game.boardDimensionInPixels - 10,
+			  'height': game.boardDimensionInPixels - 25 } );
+	$('#container').css( 'width', game.boardDimensionInPixels );
 	
     }
     
