@@ -230,6 +230,10 @@ function GameBoard() {
 	    }
 	}
 	if ( onDotCounter == this.crates.length ) {
+      $('#gameplay').empty();
+      this.winner = '<p id ="winner"> Congrats!!!! You beat level ' + (JSON.parse(localStorage.Level) + 1)  +
+      ' in ' + this.sprite.stepCount + ' steps. Press any key to move on to the next level. </p>';
+      $('#gameplay').append(this.winner);
 	    return true;
 	} else {
 	    return false;
@@ -362,7 +366,7 @@ var BOXER_GAME_MODULE = (function() {
 	$('#game').css( { 'width': my.game.boardDimensionInPixels - 10,
 			  'height': my.game.boardDimensionInPixels - 25 } );
 	$('#container').css( 'width', my.game.boardDimensionInPixels );
-  
+
     }
 
     // I don't really understand window.onload behavior
@@ -373,10 +377,8 @@ var BOXER_GAME_MODULE = (function() {
 
 
     my.advanceTheUser = function () {
-	var winMessage = '<p id ="winner"> Congrats!!!! You beat level ' + (my.user.currentLevel + 1)  +
-	    ' in ' + my.game.sprite.stepCount + ' steps. Press any key to move on to the next level. </p>';
 	$('#gameplay').empty();
-	$('#gameplay').append(winMessage);
+
 	console.log( "break: advanceTheUser " );
 	/*if ( my.user.levelScores[my.user.difficulty][my.user.currentLevel] > my.game.sprite.stepCount
 	     && 0 < my.user.levelScores[my.user.difficulty][my.user.currentLevel] ) {
