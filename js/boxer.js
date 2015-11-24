@@ -362,6 +362,7 @@ var BOXER_GAME_MODULE = (function() {
 	$('#game').css( { 'width': my.game.boardDimensionInPixels - 10,
 			  'height': my.game.boardDimensionInPixels - 25 } );
 	$('#container').css( 'width', my.game.boardDimensionInPixels );
+  
     }
 
     // I don't really understand window.onload behavior
@@ -376,7 +377,6 @@ var BOXER_GAME_MODULE = (function() {
 	    ' in ' + my.game.sprite.stepCount + ' steps. Press any key to move on to the next level. </p>';
 	$('#gameplay').empty();
 	$('#gameplay').append(winMessage);
-  console.log(my.user.difficulty);
 	console.log( "break: advanceTheUser " );
 	/*if ( my.user.levelScores[my.user.difficulty][my.user.currentLevel] > my.game.sprite.stepCount
 	     && 0 < my.user.levelScores[my.user.difficulty][my.user.currentLevel] ) {
@@ -401,19 +401,19 @@ var BOXER_GAME_MODULE = (function() {
 
     function addCurrentStatus() {
 	$('#counter').empty();
-	var status ='<p class="current"> Difficulty: ' + my.user.difficulty
-	    + '<p> Level: ' + (my.user.currentLevel + 1) + '<p> Steps: '
-	    + my.game.sprite.stepCount + '</p>';
+	var status ='<table> <tr> <th class="th"> Difficulty: </th> <td class="table">'+ my.user.difficulty +
+  '</td> <th class = "th"> Level: </th> <td class="table">' +  (my.user.currentLevel + 1)
+  + ' </td> <th class="th"> Steps: </th> <td class="table"> ' + my.game.sprite.stepCount +  ' </td><tr> </table> ';
       $('#counter').append(status);
     }
 
     my.processInput = function(key) {
-
 	var keyvalue = key.keyCode;
 	var xy = [ (my.game.sprite.x / cellWidth), (my.game.sprite.y / cellWidth) ];
 
 	// Keep key input from scrolling
 	key.preventDefault();
+
 
 	if ( my.game.winCondition ) {
 	    my.advanceTheUser();
