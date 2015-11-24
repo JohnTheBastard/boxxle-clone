@@ -35,7 +35,7 @@ var removeClass = function() {
 
 
 var welcomeBack = function() {
-    var name = JSON.parse( localStorage.getItem( "Name" ) ); 
+    var name = JSON.parse( localStorage.getItem( "Name" ) );
     var welcome = ('<p class="welcome"> Welcome back, ' + name + '. To continue ' +
 		   'playing from your last game, click the Gameboy or the "Play" tab above. ' +
 		   'If you would like to start over, please clear your web data. </p>');
@@ -62,8 +62,9 @@ function User() {
 	this.currentLevel = JSON.parse( localStorage.getItem( "Level" ) );
 	this.levelScores = JSON.parse( localStorage.getItem( "Scores" ) );
 	this.difficulty = JSON.parse( localStorage.getItem( "Difficulty" ) );
+  console.log(this.difficulty)
     }
-    
+
 
     this.init = function() {
 	if ( !Boolean( JSON.parse(localStorage.getItem("Initialized") ) ) ) {
@@ -79,7 +80,7 @@ function User() {
 	    console.log(Boolean( JSON.parse(localStorage.getItem("Initialized") ) ) + " And I didn't make it.");
 	    removeClass();
 	    this.loadData();
-	    welcomeBack();
+	  //  welcomeBack();
 	}
     }
 }
@@ -124,11 +125,11 @@ function GameBoard() {
     this.canvas = this.$canvasJQ[0];
     this.context = this.canvas.getContext("2d");
 
-    	
+
     this.$elementJQ = $('<section></section>').attr( 'id', "container" );
     this.element = this.$elementJQ[0];
     this.element.style.position = "absolute";
-    
+
     /* * * * * * * * * * * * * * * *
      * * * * Member Methods  * * * *
      * * * * * * * * * * * * * * * */
@@ -146,8 +147,8 @@ function GameBoard() {
 	this.$elementJQ.empty();
 	this.winCondition = false;
     }
-    
-    
+
+
     // Chrome needs me to access parameter arrays this way.
     this.updateCell = function( xy, tileType, tileURL, crateStatus) {
 	this.coordinates[ xy[0] ][ xy[1] ].tile = tileType;
@@ -165,7 +166,7 @@ function GameBoard() {
 	this.canvas.style.left = 0;
 	this.canvas.style.top = 0;
 	this.canvas.style.zIndex = "10";
-	
+
 	this.element.style.left = 0;
 	this.element.style.top = 0;
 	this.element.style.zIndex = "0";
@@ -173,10 +174,10 @@ function GameBoard() {
 	// This is where we will change CSS element width and height
 
 
-	
+
 	// Clear any existing data
 	this.clearTheBoard();
-	
+
 	for ( var ii = 0; ii < this.boardData.dimension; ii++ ) {
 	    for ( var jj = 0; jj < this.boardData.dimension; jj++ ) {
 		this.coordinates.push( [ ] );
@@ -184,7 +185,7 @@ function GameBoard() {
 		this.$elementJQ.append( this.coordinates[jj][ii].$div );
 	    }
 	}
-	
+
 	// update floor tiles
 	for ( var ii = 0; ii < this.boardData.floor.length; ii++ ) {
 	    this.updateCell(this.boardData.floor[ii], "floor", floorURL, false );
@@ -193,7 +194,7 @@ function GameBoard() {
 	for ( var ii = 0; ii < this.boardData.dots.length; ii++ ) {
 	    this.updateCell(this.boardData.dots[ii], "dot", dotsURL, false );
 	}
-	
+
 	// make our crates
 	for ( var ii = 0; ii < this.boardData.crate.length; ii++ ) {
 	    this.crates.push( new Crate( this.boardData.crate[ii] ) );
@@ -203,7 +204,7 @@ function GameBoard() {
 	    if ( this.crates[ii].onDot) {
 		this.crates[ii].$crateImg.attr('src', crateOnDotURL );
 	    }
-	    
+
 	}
 
 	// make a sprite
@@ -249,7 +250,7 @@ function GameBoard() {
 	}
 
 	this.winCondition = this.checkWinCondition();
-	
+
 
     }
 
@@ -351,7 +352,7 @@ var BOXER_GAME_MODULE = (function() {
     my.$anchor = $( "#gameBoard" );
     my.user = new User();
     my.game = new GameBoard( );
-    
+
     my.initializeGameBoard = function() {
 	my.$anchor.empty();
 	my.user.init();
@@ -368,21 +369,21 @@ var BOXER_GAME_MODULE = (function() {
     window.onload = function () {
 	my.initializeGameBoard();
     }
-    
-    
+
+
     my.advanceTheUser = function () {
 	var winMessage = '<p id ="winner"> Congrats!!!! You beat level ' + (my.user.currentLevel + 1)  +
 	    ' in ' + my.game.sprite.stepCount + ' steps. Press any key to move on to the next level. </p>';
 	$('#gameplay').empty();
 	$('#gameplay').append(winMessage);
-	
+  console.log(my.user.difficulty);
 	console.log( "break: advanceTheUser " );
-	if ( my.user.levelScores[my.user.difficulty][my.user.currentLevel] > my.game.sprite.stepCount
+	/*if ( my.user.levelScores[my.user.difficulty][my.user.currentLevel] > my.game.sprite.stepCount
 	     && 0 < my.user.levelScores[my.user.difficulty][my.user.currentLevel] ) {
 	    my.user.levelScores[my.user.difficulty][my.user.currentLevel ] = my.game.sprite.stepCount;
-	}
+	}*/
 	if( my.user.currentLevel < ( levelData[my.user.difficulty].length - 1 ) ) {
-	    my.user.levelScores[my.user.difficulty][my.user.currentLevel ] = my.game.sprite.stepCount;
+	  //  my.user.levelScores[my.user.difficulty][my.user.currentLevel ] = my.game.sprite.stepCount;
 	    my.user.currentLevel++;
 	} else if( my.user.difficulty == "easy"
 		    && my.user.currentLevel == levelData[my.user.difficulty].length -1) {
@@ -405,11 +406,12 @@ var BOXER_GAME_MODULE = (function() {
 	    + my.game.sprite.stepCount + '</p>';
       $('#counter').append(status);
     }
-    
+
     my.processInput = function(key) {
+
 	var keyvalue = key.keyCode;
 	var xy = [ (my.game.sprite.x / cellWidth), (my.game.sprite.y / cellWidth) ];
-	
+
 	// Keep key input from scrolling
 	key.preventDefault();
 
@@ -434,7 +436,7 @@ var BOXER_GAME_MODULE = (function() {
 		deltaXY = [ 0, 1 ];
 		my.game.tryToMove( xy, deltaXY );
 	    }
-	    
+
 	    if (keyvalue == 13) {
 		my.game.draw();
 	    } else if (keyvalue == 32) {
@@ -460,7 +462,7 @@ var BOXER_GAME_MODULE = (function() {
 	    my.$anchor.parent().css( 'transform', 'scale( ' + scale + ', ' + scale + ')');
 	}
     }
-    
+
     my.scaleGameBoard();
 
     my.eventListeners= function() {

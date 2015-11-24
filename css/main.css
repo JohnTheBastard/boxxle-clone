@@ -71,6 +71,49 @@ nav a {
 }
 
 /******************
+ Initial Paragraphs
+      Fieldset
+******************/
+
+.initialParagraphs {
+  line-height: 1.5em;
+  border: 3px solid #ccc;
+  padding: 10px;
+  width: 960px;
+  max-width: 90%;
+  margin: 10px auto 20px auto;
+  text-align: center;
+  overflow: auto;
+}
+
+#userData {
+  line-height: 1.5em;
+  border: 3px solid #ccc;
+  padding: 10px;
+  width: 960px;
+  max-width: 90%;
+  margin: 10px auto;
+  text-align: center;
+  overflow: auto;
+}
+
+#user { /* FieldSet */
+  max-width: 50%;
+  margin: 0 auto;
+  text-align: center;
+  border: 2px solid #0DF205;
+  font-family:  'Press Start 2P', cursive;
+  font-size: .7em;
+}
+
+#save {
+  font-family: 'Press Start 2P', cursive;
+  
+}
+
+
+
+/******************
       FOOTER
 ******************/
 
