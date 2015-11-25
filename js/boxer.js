@@ -47,13 +47,13 @@ var welcomeBack = function() {
 function User() {
     this.currentLevel = 0;
     this.levelScores = { easy: [ ], hard: [ ] };
-    this.difficulty = "easy";
+    this.difficulty = JSON.parse(localStorage.Difficulty);
 
     this.saveData = function() {
 	// localStorage.setItem("Name", JSON.stringify( this.name ) );
 	localStorage.setItem("Level", JSON.stringify( this.currentLevel ) );
 	localStorage.setItem("Scores", JSON.stringify( this.levelScores ) );
-	localStorage.setItem("Difficulty", JSON.stringify(this.difficulty ) );
+	localStorage.setItem("Difficulty",JSON.stringify( this.difficulty ) );
 	localStorage.setItem("Initialized", JSON.stringify( 'true' ) );
     }
 
@@ -94,6 +94,7 @@ function User() {
 		this.levelScores.hard[ii] = 0;
 	    }
 	    this.saveData();
+    
 	} else {
 	    //console.log(this.isInitialized ) + " And I didn't make it.");
 	    removeClass();
