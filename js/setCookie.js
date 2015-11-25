@@ -11,7 +11,7 @@ checkLocalStorage = function() {
     var welcomeBack = '<p class="welcome"> Welcome back ' + localStorage.Name + '. To continue ' +
       'on your current level click the gameboy or the " Play " tab above.' +
      ' If this is not you or you would like to start over at level one, simply'  +
-     'update the information by filling out fieldset below and click save.'
+     ' update the information by filling out fieldset below and click save.'
     $('.welcome').replaceWith(welcomeBack);
 
   }

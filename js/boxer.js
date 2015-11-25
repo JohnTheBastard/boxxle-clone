@@ -67,8 +67,26 @@ function User() {
 
 
     this.init = function() {
-	if ( !Boolean( JSON.parse(localStorage.getItem("Initialized") ) ) ) {
-	    console.log(Boolean( JSON.parse(localStorage.getItem("Initialized") ) ) + " And I made it.");
+
+	// My attempt to use Boolean() to cast our localStorage string
+	// was returning true regardless of the value so I wrote my own.
+	function castToBool(stringToCast) {
+	    if( stringToCast == "true" ) {
+		return true;
+	    } else if( stringToCast == "false" ) {
+		return false;
+	    } else {
+		console.log("You're attempt to cast " + castToBool + " to a boolean failed." )
+	    }
+	}
+
+	this.isInitialized = castToBool( JSON.parse(localStorage.getItem("Initialized") ) );
+	console.log(localStorage.getItem("Initialized"));
+	console.log(this.isInitialized);
+
+
+	if ( !this.isInitialized  ) {
+	  //  console.log((this.isInitialized  ) + " And I made it.");
 	    for( var ii=0; ii < levelData.easy.length; ii++ ) {
 		this.levelScores.easy[ii] = 0;
 	    }
@@ -77,10 +95,9 @@ function User() {
 	    }
 	    this.saveData();
 	} else {
-	    console.log(Boolean( JSON.parse(localStorage.getItem("Initialized") ) ) + " And I didn't make it.");
+	    //console.log(this.isInitialized ) + " And I didn't make it.");
 	    removeClass();
 	    this.loadData();
-	  //  welcomeBack();
 	}
     }
 }
