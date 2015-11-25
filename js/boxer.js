@@ -85,10 +85,8 @@ function User() {
 	console.log(this.isInitialized);
 
 
-
 	if ( !this.isInitialized  ) {
 	  //  console.log((this.isInitialized  ) + " And I made it.");
-
 	    for( var ii=0; ii < levelData.easy.length; ii++ ) {
 		this.levelScores.easy[ii] = 0;
 	    }
@@ -98,9 +96,7 @@ function User() {
 	    this.saveData();
 
 	} else {
-
 	    //console.log(this.isInitialized ) + " And I didn't make it.");
-
 	    removeClass();
 	    this.loadData();
 	}
